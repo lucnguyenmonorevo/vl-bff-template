@@ -1,0 +1,29 @@
+service_name: general-info
+aggregate_name: pages
+domain_name: functions
+methods:
+  - method_name: login
+    request:
+      payload_name: LoginRequest
+      data:
+        - name: username
+          type: string
+          is_not_null: false
+        - name: organization_name
+          type: string
+          is_not_null: false
+        - name: password
+          type: string
+          is_not_null: false
+    response:
+      payload_name: LoginResponse
+      data:
+        - name: id_token
+          type: string
+          is_not_null: false
+        - name: access_token
+          type: string
+          is_not_null: false
+        - name: refresh_token
+          type: string
+          is_not_null: false
