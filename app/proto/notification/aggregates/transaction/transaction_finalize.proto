@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package notification.aggregates.transaction;
+option go_package="vl-account/proto_generated/notification/aggregates/transaction/;prototrx";
+
+import "proto/common/messaging/messaging.proto";
+
+// UseCase
+
+enum TransactionStatus {
+  COMMIT = 0;
+  ROLLBACK = 1;
+}
+
+message TransactionFinalizeUseCaseRequestData {
+  TransactionStatus status = 1;
+}
+
+message TransactionFinalizeUseCaseResponseData {
+}
+
+message TransactionFinalizeUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TransactionFinalizeUseCaseRequestData data = 3;
+}
+
+message TransactionFinalizeUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  TransactionFinalizeUseCaseResponseData data = 3;
+}

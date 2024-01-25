@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package account.aggregates.permission.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/permission/use_case;protopermissionusecase";
+
+import "proto/account/aggregates/permission/use_case/permission_organization.proto";
+import "proto/common/messaging/messaging.proto";
+
+
+message PermissionOrganizationDeleteUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  PermissionOrganizationDeleteUseCaseRequestData data = 3;
+}
+
+message PermissionOrganizationDeleteUseCaseRequestData {
+  uint64 id = 1;
+}
+
+message PermissionOrganizationDeleteUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  PermissionOrganization data = 3;
+}

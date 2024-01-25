@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package account.aggregates.account.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/account/grpc;protoaccountgrpc";
+
+import "proto/account/aggregates/account/grpc/department_get.proto";
+import "proto/common/grpc/grpc.proto";
+
+// Request
+message DepartmentListRequest {
+  common.grpc.GRPCRequest base = 1;
+  DepartmentListRequestData data = 2;
+}
+
+message DepartmentListRequestData {
+  uint64 organization_id = 1;
+  string searchText = 2;
+  uint32 offset = 3;
+  uint32 limit = 4;
+  uint64 base_id = 5;
+  repeated uint64 ids = 6;
+}
+
+// Response
+message DepartmentListResponse {
+  common.grpc.GRPCResponse base = 1;
+  DepartmentListResponseData data = 2;
+}
+
+message DepartmentListResponseData {
+  repeated DepartmentGetResponseData departments = 1;
+}

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package account.aggregates.template;
+option go_package="vl-account/proto_generated/account/aggregates/template/;prototemplate";
+
+import "proto/account/aggregates/template/template_role_permission_policy.proto";
+import "proto/common/grpc/grpc.proto";
+import "proto/common/messaging/messaging.proto";
+
+message TemplateRolePermissionPolicyCreateRequestData {
+  uint64 template_role_id = 1;
+  uint64 permission_policy_id = 2;
+}
+
+message TemplateRolePermissionPolicyCreateResponseData {
+  uint64 id = 1;
+}
+
+message TemplateRolePermissionPolicyCreateRequest {
+  common.grpc.GRPCRequest base = 1;
+  TemplateRolePermissionPolicyCreateRequestData data = 2;
+}
+
+message TemplateRolePermissionPolicyCreateResponse {
+  common.grpc.GRPCResponse base = 1;
+  TemplateRolePermissionPolicyCreateResponseData data = 2;
+}
+
+message TemplateRolePermissionPolicyCreateUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TemplateRolePermissionPolicyCreateRequestData data = 3;
+}
+
+message TemplateRolePermissionPolicyCreateUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  TemplateRolePermissionPolicyCreateResponseData data = 3;
+}
+
+message TemplateRolePermissionPolicyCreateCQRSRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TemplateRolePermissionPolicyCreateRequestData data = 3;
+}
+
+message TemplateRolePermissionPolicyCreateCQRSResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  TemplateRolePermissionPolicy data = 3;
+}

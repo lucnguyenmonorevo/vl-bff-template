@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package account.aggregates.account.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/account/use_case;protoaccountusecase";
+
+import "proto/common/messaging/messaging.proto";
+
+// Request
+message OrganizationUpdateUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  OrganizationUpdateUseCaseRequestData data = 3;
+}
+
+message OrganizationUpdateUseCaseRequestData {
+  uint64 id = 1;
+  string name = 2;
+  OrganizationGeneralSettingCreateRequestData general_setting = 3;
+}
+
+// Response
+message OrganizationUpdateUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  OrganizationUpdateUseCaseResponseData data = 3;
+}
+
+message OrganizationUpdateUseCaseResponseData {
+  uint64 id = 1;
+}
+
+message OrganizationGeneralSettingCreateRequestData {
+  string furigana = 1;
+  string zipcode = 2;
+  string country = 3;
+  string prefecture = 4;
+  string address = 5;
+  string street_name = 6;
+  string building = 7;
+  string tel = 8;
+  string fax = 9;
+  string email_address = 10;
+  string logo_image = 11;
+  string serial_imprint_image = 12;
+}

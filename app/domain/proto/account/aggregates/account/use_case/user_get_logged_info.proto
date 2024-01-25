@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package account.aggregates.account.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/account/use_case;protoaccountusecase";
+
+import "proto/account/aggregates/account/use_case/user_info.proto";
+import "proto/account/aggregates/account/use_case/department.proto";
+import "proto/account/aggregates/account/use_case/base.proto";
+import "proto/account/aggregates/account/use_case/organization.proto";
+import "proto/common/messaging/messaging.proto";
+
+// Request
+message UserGetLoggedInfoUseCaseRequest {
+    common.messaging.Transaction transaction = 1;
+    common.messaging.Client client = 2;
+    UserGetLoggedInfoRequestData data = 3;
+}
+
+message UserGetLoggedInfoRequestData {
+  string access_token = 1;
+}
+
+// Response
+message UserGetLoggedInfoUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  UserGetLoggedInfoResponseData data = 2;
+  common.messaging.Error error = 3;
+}
+
+message UserGetLoggedInfoResponseData {
+    UserInfo user_info = 1;
+    Organization organization = 2;
+    repeated Department departments = 3;
+    repeated Base bases = 4;
+    repeated Bookmark bookmarks = 5;
+}
+
+message Bookmark {
+  uint64 id = 1;
+  uint64 user_id = 2;
+}

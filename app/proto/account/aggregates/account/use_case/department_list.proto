@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package account.aggregates.account.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/account/use_case;protoaccountusecase";
+
+import "proto/account/aggregates/account/use_case/department_get.proto";
+import "proto/common/messaging/messaging.proto";
+
+// Request
+message DepartmentListUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  DepartmentListUseCaseRequestData data = 3;
+}
+
+message DepartmentListUseCaseRequestData {
+  uint64 organization_id = 1;
+  string searchText = 2;
+  uint32 offset = 3;
+  uint32 limit = 4;
+  uint64 base_id = 5;
+  repeated uint64 ids = 6;
+}
+
+// Response
+message DepartmentListUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  DepartmentListUseCaseResponseData data = 3;
+}
+
+message DepartmentListUseCaseResponseData {
+  repeated DepartmentGetUseCaseResponseData departments = 1;
+}

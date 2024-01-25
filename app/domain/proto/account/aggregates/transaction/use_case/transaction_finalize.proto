@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package account.aggregates.transaction.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/transaction/use_case;prototrxusecase";
+
+import "proto/common/messaging/messaging.proto";
+import "google/protobuf/any.proto";
+
+enum TransactionStatus {
+  COMMIT = 0;
+  ROLLBACK = 1;
+}
+
+// request
+
+message TransactionFinalizeUseCaseRequest {
+ common.messaging.Transaction transaction = 1;
+ common.messaging.Client client = 2;
+  TransactionFinalizeUseCaseRequestData data = 3;
+}
+
+message TransactionFinalizeUseCaseRequestData {
+  TransactionStatus status = 1;
+}
+
+// response
+
+message TransactionFinalizeUseCaseResponse {
+ common.messaging.Transaction transaction = 1;
+ common.messaging.Error error = 2;
+  TransactionFinalizeUseCaseResponseData data = 3;
+}
+
+message TransactionFinalizeUseCaseResponseData {
+  map<string, google.protobuf.Any> results = 1;
+}

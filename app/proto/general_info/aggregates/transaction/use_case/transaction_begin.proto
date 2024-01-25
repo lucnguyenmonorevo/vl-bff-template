@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package general_info.aggregates.transaction.use_case;
+option go_package="vl-account/proto_generated/general_info/aggregates/transaction/use_case;prototrxusecase";
+
+import "proto/general_info/aggregates/transaction/use_case/transaction_log.proto";
+import "proto/common/messaging/messaging.proto";
+
+// request
+
+message TransactionBeginUseCaseRequest {
+ common.messaging.Transaction transaction = 1;
+ common.messaging.Client client = 2;
+  TransactionBeginUseCaseRequestData data = 3;
+}
+
+message TransactionBeginUseCaseRequestData {
+  string ep_id = 1;
+  string ep_trx_id = 2;
+}
+
+// response
+
+message TransactionBeginUseCaseResponse {
+ common.messaging.Transaction transaction = 1;
+ common.messaging.Error error = 2;
+  TransactionBeginUseCaseResponseData data = 3;
+}
+
+message TransactionBeginUseCaseResponseData {
+  TransactionLog transaction_log = 1;
+}

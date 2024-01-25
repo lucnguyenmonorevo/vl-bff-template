@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package account.aggregates.permission.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/permission/grpc;protopermissiongrpc";
+
+import "proto/common/grpc/grpc.proto";
+
+
+message OrganizationSubscriptionDeleteRequest {
+  common.grpc.GRPCRequest base = 1;
+  OrganizationSubscriptionDeleteRequestData data = 2;
+}
+
+message OrganizationSubscriptionDeleteRequestData {
+  uint64 id = 1;
+}
+
+
+message OrganizationSubscriptionDeleteResponse {
+  common.grpc.GRPCResponse base = 1;
+  OrganizationSubscriptionDeleteResponseData data = 2;
+}
+
+message OrganizationSubscriptionDeleteResponseData {
+  uint64 id = 1;
+}

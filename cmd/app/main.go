@@ -6,11 +6,10 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"path"
 	"syscall"
 	"vl-template/app/config"
 	"vl-template/app/domain"
-	"vl-template/app/generator/graphql"
+	"vl-template/app/generator/src"
 )
 
 func main() {
@@ -38,12 +37,12 @@ func main() {
 		panic(err)
 	}
 	specDir := "app/domain/spec"
-	domainReader := NewDomainReader(conf)
-	if err = domainReader.Read(specDir); err != nil {
+	domainReader := domain.NewDomainReader(conf)
+	if err = domainReader.ReadFromSpec(specDir); err != nil {
 		log.Fatalln("can't read domain reader")
 	}
 
-	for _, domains := range domainReader.domainsMap {
+	for _, domains := range domainReader.DomainsMap {
 		if err := generateSchema(domains); err != nil {
 			panic(err)
 		}
@@ -53,50 +52,8 @@ func main() {
 
 }
 
-type DomainReader struct {
-	conf       *config.Config
-	domainsMap map[string][]*domain.Domain
-}
-
-func NewDomainReader(conf *config.Config) *DomainReader {
-	return &DomainReader{
-		conf:       conf,
-		domainsMap: map[string][]*domain.Domain{},
-	}
-
-}
-
-func (r *DomainReader) Read(dir string) error {
-	if err := r.walkDir(dir); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (r *DomainReader) walkDir(dir string) error {
-	files, err := os.ReadDir(dir)
-	if err != nil {
-		return err
-	}
-	for _, file := range files {
-		fileName := file.Name()
-		if file.IsDir() {
-			childDir := path.Join(dir, fileName)
-			r.walkDir(childDir)
-		} else {
-			dm, err := domain.NewDomain(dir, fileName)
-			if err != nil {
-				return err
-			}
-
-			r.domainsMap[dm.ServiceName] = append(r.domainsMap[dm.ServiceName], dm)
-		}
-	}
-	return nil
-}
-
 func generateSchema(req []*domain.Domain) error {
-	schemaGenerator := graphql.NewSchemaGenerator(req)
+	schemaGenerator := src.NewSchemaGenerator(req)
 	if err := schemaGenerator.Generate(); err != nil {
 		return err
 	}

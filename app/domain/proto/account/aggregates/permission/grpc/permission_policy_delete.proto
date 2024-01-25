@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package account.aggregates.permission.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/permission/grpc;protopermissiongrpc";
+
+import "proto/common/grpc/grpc.proto";
+
+
+message PermissionPolicyDeleteRequest {
+  common.grpc.GRPCRequest base = 1;
+  PermissionPolicyDeleteRequestData data = 2;
+}
+
+message PermissionPolicyDeleteRequestData {
+  uint64 id = 1;
+}
+
+
+message PermissionPolicyDeleteResponse {
+  common.grpc.GRPCResponse base = 1;
+  PermissionPolicyDeleteResponseData data = 2;
+}
+
+message PermissionPolicyDeleteResponseData {
+  uint64 id = 1;
+}

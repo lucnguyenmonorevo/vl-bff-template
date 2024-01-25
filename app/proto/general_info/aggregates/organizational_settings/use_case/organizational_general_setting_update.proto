@@ -1,0 +1,40 @@
+
+syntax = "proto3";
+
+package general_info.aggregates.organizational_settings.use_case;
+option go_package="vl-account/proto_generated/general_info/aggregates/organizational_settings/use_case;protoorganizationalsettingsusecase";
+
+import "proto/general_info/aggregates/organizational_settings/use_case/organizational_general_setting.proto";
+import "proto/common/messaging/messaging.proto";
+
+// request
+
+message OrganizationalGeneralSettingUpdateUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  OrganizationalGeneralSettingUpdateUseCaseRequestData data = 3;
+}
+
+message OrganizationalGeneralSettingUpdateUseCaseRequestData {
+  uint64 id = 1;
+  string furigana = 2;
+  string zipcode = 3;
+  string country = 4;
+  string prefecture = 5;
+  string address = 6;
+  string street_name = 7;
+  string building = 8;
+  string tel = 9;
+  string fax = 10;
+  string email_address = 11;
+  string logo_image = 12;
+  string serial_imprint_image = 13;
+}
+
+// response
+
+message OrganizationalGeneralSettingUpdateUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  OrganizationalGeneralSetting data = 3;
+}

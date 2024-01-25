@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package account.aggregates.account.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/account/grpc;protoaccountgrpc";
+
+import "proto/common/grpc/grpc.proto";
+import "proto/account/aggregates/account/grpc/base.proto";
+import "proto/account/aggregates/account/grpc/department.proto";
+import "proto/account/aggregates/account/grpc/user_info.proto";
+import "proto/account/aggregates/account/grpc/organization.proto";
+
+// Request
+message UserGetLoggedInfoRequest {
+  common.grpc.GRPCRequest base = 1;
+  UserGetLoggedInfoRequestData data = 2;
+}
+
+message UserGetLoggedInfoRequestData {
+    string access_token = 1;
+}
+
+// Response
+message UserGetLoggedInfoResponse {
+  common.grpc.GRPCResponse base = 1;
+  UserGetLoggedInfoResponseData data = 2;
+}
+
+message UserGetLoggedInfoResponseData {
+  UserInfo user_info = 1;
+  Organization organization = 2;
+  repeated Department departments = 3;
+  repeated Base bases = 4;
+  repeated Bookmark bookmarks = 5;
+}
+
+message Bookmark {
+  uint64 id = 1;
+  uint64 user_id = 2;
+}

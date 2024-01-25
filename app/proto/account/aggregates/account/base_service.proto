@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package account.aggregates.account;
+option go_package="vl-account/proto_generated/account/aggregates/account/;protoaccount";
+
+import "proto/account/aggregates/account/grpc/base_get.proto";
+import "proto/account/aggregates/account/grpc/base_list.proto";
+import "proto/account/aggregates/account/grpc/base_create.proto";
+import "proto/account/aggregates/account/grpc/base_delete.proto";
+import "proto/account/aggregates/account/grpc/base_update.proto";
+
+service BaseService {
+  rpc Create(grpc.BaseCreateRequest) returns (grpc.BaseCreateResponse);
+  rpc Update(grpc.BaseUpdateRequest) returns (grpc.BaseUpdateResponse);
+  rpc Delete(grpc.BaseDeleteRequest) returns (grpc.BaseDeleteResponse);
+  rpc Get(grpc.BaseGetRequest) returns (grpc.BaseGetResponse);
+  rpc List(grpc.BaseListRequest) returns (grpc.BaseListResponse);
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package account.aggregates.permission;
+option go_package="vl-account/proto_generated/account/aggregates/permission/;protopermission";
+
+import "proto/account/aggregates/permission/grpc/permission_organization_list.proto";
+import "proto/account/aggregates/permission/grpc/permission_organization_get.proto";
+import "proto/account/aggregates/permission/grpc/permission_organization_delete.proto";
+import "proto/account/aggregates/permission/grpc/permission_organization_create.proto";
+import "proto/account/aggregates/permission/grpc/permission_organization_update.proto";
+
+service PermissionOrganizationService {
+  rpc List(grpc.PermissionOrganizationListRequest) returns (grpc.PermissionOrganizationListResponse);
+  rpc Get(grpc.PermissionOrganizationGetRequest) returns (grpc.PermissionOrganizationGetResponse);
+  rpc Delete(grpc.PermissionOrganizationDeleteRequest) returns (grpc.PermissionOrganizationDeleteResponse);
+  rpc Create(grpc.PermissionOrganizationCreateRequest) returns (grpc.PermissionOrganizationCreateResponse);
+  rpc Update(grpc.PermissionOrganizationUpdateRequest) returns (grpc.PermissionOrganizationUpdateResponse);
+}

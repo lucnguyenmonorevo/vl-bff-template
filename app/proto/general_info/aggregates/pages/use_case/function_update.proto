@@ -1,0 +1,35 @@
+
+syntax = "proto3";
+
+package general_info.aggregates.pages.use_case;
+option go_package="vl-account/proto_generated/general_info/aggregates/pages/use_case;protopagesusecase";
+
+import "proto/general_info/aggregates/pages/use_case/function.proto";
+import "proto/common/messaging/messaging.proto";
+
+// request
+
+message FunctionUpdateUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  FunctionUpdateUseCaseRequestData data = 3;
+}
+
+message FunctionUpdateUseCaseRequestData {
+  uint64 id = 1;
+  string name = 2;
+  string description = 3;
+  uint64 page_id = 4;
+  string slug = 5;
+  uint32 sequence = 6;
+  string icon = 7;
+  string key = 8;
+}
+
+// response
+
+message FunctionUpdateUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  Function data = 3;
+}

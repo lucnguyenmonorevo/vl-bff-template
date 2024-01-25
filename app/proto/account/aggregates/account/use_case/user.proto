@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package account.aggregates.account.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/account/use_case;protoaccountusecase";
+
+import "google/protobuf/timestamp.proto";
+
+// common
+
+message User {
+  uint64 id = 1;
+  string name = 2;
+  uint64 organization_id = 3;
+  string organizational_internal_id = 4;
+  bool   is_admin = 5;
+  uint32 semantic_lock = 6;
+  string instance_id = 7;
+  string secondary_ep_id = 8;
+  string ep_trx_id = 9;
+  string cqrs_exec_id = 10;
+	google.protobuf.Timestamp created_at = 11;
+	string created_by = 12;
+	google.protobuf.Timestamp updated_at = 13;
+	string updated_by = 14;
+	google.protobuf.Timestamp deleted_at = 15;
+	string deleted_by = 16;
+}

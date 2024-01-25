@@ -2,28 +2,184 @@ service_name: account
 aggregate_name: permissions
 domain_name: organizational_roles
 methods:
-  - method_name: login
-    request:
-      payload_name: LoginRequest
-      data:
-        - name: username
-          type: string
-          is_not_null: false
-        - name: organization_name
-          type: string
-          is_not_null: false
-        - name: password
-          type: string
-          is_not_null: false
-    response:
-      payload_name: LoginResponse
-      data:
-        - name: id_token
-          type: string
-          is_not_null: false
-        - name: access_token
-          type: string
-          is_not_null: false
-        - name: refresh_token
-          type: string
-          is_not_null: false
+  - name: Create
+    type: mutation
+    request_name: OrganizationalRoleCreateRequest
+    response_name: OrganizationalRoleCreateResponse
+    requests:
+      - name: OrganizationalRoleCreateRequest
+        data:
+          - name: data
+            type: OrganizationalRoleCreateRequestData
+            is_not_null: true
+      - name: OrganizationalRoleCreateRequestData
+        data:
+          - name: permission_organization_id
+            type: uint64
+            is_not_null: false
+          - name: name
+            type: string
+            is_not_null: false
+          - name: description
+            type: string
+            is_not_null: false
+          - name: type
+            type: string
+            is_not_null: false
+    responses:
+      - name: OrganizationalRoleCreateResponse
+        data:
+          - name: data
+            type: OrganizationalRoleCreateResponseData
+            is_not_null: true
+      - name: OrganizationalRoleCreateResponseData
+        data:
+          - name: id
+            type: uint64
+            is_not_null: false
+
+  - name: Update
+    type: mutation
+    request_name: OrganizationalRoleUpdateRequest
+    response_name: OrganizationalRoleUpdateResponse
+    requests:
+      - name: OrganizationalRoleUpdateRequest
+        data:
+          - name: data
+            type: OrganizationalRoleUpdateRequestData
+            is_not_null: true
+      - name: OrganizationalRoleUpdateRequestData
+        data:
+          - name: id
+            type: uint64
+            is_not_null: false
+          - name: permission_organization_id
+            type: uint64
+            is_not_null: false
+          - name: name
+            type: string
+            is_not_null: false
+          - name: description
+            type: string
+            is_not_null: false
+          - name: type
+            type: string
+            is_not_null: false
+    responses:
+      - name: OrganizationalRoleUpdateResponse
+        data:
+          - name: data
+            type: OrganizationalRoleUpdateResponseData
+            is_not_null: true
+      - name: OrganizationalRoleUpdateResponseData
+        data:
+          - name: id
+            type: uint64
+            is_not_null: false
+
+  - name: Delete
+    type: mutation
+    request_name: OrganizationalRoleDeleteRequest
+    response_name: OrganizationalRoleDeleteResponse
+    requests:
+      - name: OrganizationalRoleDeleteRequest
+        data:
+          - name: data
+            type: OrganizationalRoleDeleteRequestData
+            is_not_null: true
+      - name: OrganizationalRoleDeleteRequestData
+        data:
+          - name: permission_organization_id
+            type: uint64
+            is_not_null: false
+    responses:
+      - name: OrganizationalRoleDeleteResponse
+        data:
+          - name: data
+            type: OrganizationalRoleDeleteResponseData
+            is_not_null: true
+      - name: OrganizationalRoleDeleteResponseData
+        data:
+          - name: id
+            type: uint64
+            is_not_null: false
+
+  - name: Get
+    type: query
+    request_name: OrganizationalRoleGetRequest
+    response_name: OrganizationalRoleGetResponse
+    requests:
+      - name: OrganizationalRoleGetRequest
+        data:
+          - name: data
+            type: OrganizationalRoleGetRequestData
+            is_not_null: true
+      - name: OrganizationalRoleGetRequestData
+        data:
+          - name: permission_organization_id
+            type: uint64
+            is_not_null: false
+    responses:
+      - name: OrganizationalRoleGetResponse
+        data:
+          - name: data
+            type: OrganizationalRoleGetResponseData
+            is_not_null: true
+      - name: OrganizationalRoleGetResponseData
+        data:
+          - name: id
+            type: uint64
+            is_not_null: false
+          - name: permission_organization_id
+            type: uint64
+            is_not_null: false
+          - name: name
+            type: string
+            is_not_null: false
+          - name: description
+            type: string
+            is_not_null: false
+          - name: type
+            type: string
+            is_not_null: false
+
+  - name: List
+    type: query
+    request_name: OrganizationalRoleListRequest
+    response_name: OrganizationalRoleListResponse
+    requests:
+      - name: OrganizationalRoleListRequest
+        data:
+          - name: data
+            type: OrganizationalRoleListRequestData
+            is_not_null: true
+      - name: OrganizationalRoleListRequestData
+        data:
+          - name: limit
+            type: int32
+            is_not_null: false
+          - name: offset
+            type: int32
+            is_not_null: false
+          - name: ids
+            type: uint64
+            is_not_null: false
+            repeated: true
+          - name: permission_organization_id
+            type: uint64
+            is_not_null: false
+          - name: permission_organization_id
+            type: uint64
+            is_not_null: false
+    responses:
+      - name: OrganizationalRoleListResponse
+        data:
+          - name: organizational_roles
+            type: OrganizationalRoleListResponseData
+            is_not_null: false
+      - name: OrganizationalRoleListResponseData
+        data:
+          - name: organizational_roles
+            type: OrganizationalRoleGetResponse
+            is_not_null: false
+            repeated: true

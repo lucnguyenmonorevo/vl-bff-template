@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package account.aggregates.example.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/example/use_case;protoexampleusecase";
+
+import "proto/account/aggregates/example/use_case/user.proto";
+import "proto/common/messaging/messaging.proto";
+
+// request
+
+message UserResignUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  UserResignUseCaseRequestData data = 3;
+}
+
+message UserResignUseCaseRequestData {
+  uint64 id = 1;
+}
+
+// response
+
+message UserResignUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  User data = 3;
+}

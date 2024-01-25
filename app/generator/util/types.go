@@ -136,3 +136,51 @@ func ProtoToGo(sqlType string) string {
 		panic(fmt.Errorf("unknown type: %v", sqlType))
 	}
 }
+
+func ToGraphql(sqlType string) string {
+	switch strings.ToLower(sqlType) {
+	case "bool":
+		return "Boolean"
+	case "int32", "sint32", "sfixed32":
+		return "Int"
+	case "int64", "sint64", "sfixed64":
+		return "Int"
+	case "uint32", "fixed32":
+		return "Int"
+	case "uint64", "fixed64":
+		return "Int"
+	case "float", "double":
+		return "Float"
+	case "string":
+		return "String"
+	case "bytes":
+		return ""
+	default:
+		return sqlType
+	}
+}
+
+func IsProtoType(protoType string) bool {
+	protoTypeMap := map[string]bool{
+		"double":   true,
+		"float":    true,
+		"int32":    true,
+		"int64":    true,
+		"uint32":   true,
+		"uint64":   true,
+		"sint32":   true,
+		"sint64":   true,
+		"fixed32":  true,
+		"fixed64":  true,
+		"sfixed32": true,
+		"sfixed64": true,
+		"bool":     true,
+		"string":   true,
+		"bytes":    true,
+		"[]bytes":  true,
+	}
+	if _, ok := protoTypeMap[protoType]; ok {
+		return true
+	}
+	return false
+}

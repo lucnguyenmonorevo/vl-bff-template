@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package account.aggregates.account.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/account/use_case;protoaccountusecase";
+
+import "proto/account/aggregates/account/use_case/user_get.proto";
+import "proto/common/messaging/messaging.proto";
+
+// Request
+message UserListUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  UserListUseCaseRequestData data = 3;
+}
+
+message UserListUseCaseRequestData {
+  uint32 offset = 1;
+  uint32 limit = 2;
+  repeated uint64 ids = 3;
+  uint64 organization_id = 4;
+  uint64 base_id = 5;
+  uint64 department_id = 6;
+  string search_text = 7;
+}
+
+// Response
+message UserListUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  UserListUseCaseResponseData data = 3;
+}
+
+message UserListUseCaseResponseData {
+  repeated UserGetUseCaseResponseData users = 1;
+}

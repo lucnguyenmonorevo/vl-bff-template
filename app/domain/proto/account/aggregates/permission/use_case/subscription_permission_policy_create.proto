@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package account.aggregates.permission.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/permission/use_case;protopermissionusecase";
+
+import "proto/account/aggregates/permission/use_case/subscription_permission_policy.proto";
+import "proto/common/messaging/messaging.proto";
+
+
+message SubscriptionPermissionPolicyCreateUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  SubscriptionPermissionPolicyCreateUseCaseRequestData data = 3;
+}
+
+message SubscriptionPermissionPolicyCreateUseCaseRequestData {
+  uint64 id = 1;
+  uint64 subscription_id = 2;
+  uint64 permission_policy_id = 3;
+}
+
+message SubscriptionPermissionPolicyCreateUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  SubscriptionPermissionPolicy data = 3;
+}

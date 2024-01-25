@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package common;
+option go_package="vl-account/proto_generated/common;protoerr";
+
+/*
+| Code        | exception                                    | logLevel | message                                                            |
+| ----------- | -------------------------------------------- | -------- | ------------------------------------------------------------------ |
+| CMN_VAL_001 | InputValidationException                     | Warning  | Empty input: {param}: {value}                                      |
+| CMN_VAL_002 | InputValidationException                     | Warning  | Violation of limit count [{minimum} - {maximum}]: {param}: {value} |
+| CMN_VAL_003 | InputValidationException                     | Warning  | Invalid format: {param}: {value}                                   |
+| CMN_VAL_004 | InputValidationException                     | Warning  | Access denied.                                                     |
+| CMN_VAL_005 | InputValidationException                     | Warning  | Not found user: {param}: {value}                                   |
+| CMN_VAL_006 | InputValidationException                     | Warning  | Invalid format: password: {value}                                  |
+| CMN_VAL_007 | InputValidationException                     | Warning  | Duplicated data: {param}: {value}                                  |
+| CMN_VAL_008 | InputValidationException                     | Warning  | Not found {param}: {value}                                         |
+| CMN_VAL_009 | InputValidationException                     | warning  | startAt is bigger than endAt                                       |
+| CMN_COG_001 | CognitoInvalidParameterException             | Error    | Invalid parameter on Cognito.                                      |
+| CMN_COG_002 | CognitoInternalErrorException                | Error    | Cognito error.                                                     |
+| CMN_COG_003 | CognitoInvalidUserPoolConfigurationException | Error    | Cognito Pool config error.                                         |
+| CMN_COG_004 | CognitoUserNotFoundException                 | Error    | Cognito user not found.                                            |
+| CMN_COG_005 | CodeDeliveryFailureException                 | Error    | Temporary password cannot be delivered.                            |
+| CMN_COG_006 | CodeMismatchException                        | Error    | Temporary password doesn't match what the server was expecting.    |
+| CMN_COG_007 | ExpiredCodeException                         | Error    | Temporary password has expired.                                    |
+| CMN_COG_008 | AuthenticateValidationException              | Error    | Token expired                                                      |
+| CMN_SYS_001 | SystemNetworkException                       | Error    | Network connection exception. Can’t connect to database.           |
+| CMN_SYS_002 | SystemDatabaseException                      | Error    | Incorrect syntax error.                                            |
+| CMN_SYS_003 | SystemDatabaseException                      | Error    | Data not found. id: {param}                                        |
+| CMN_SYS_004 | SystemDatabaseException                      | Error    | Database connection timeout.                                       |
+| CMN_SYS_005 | SystemDatabaseException                      | Error    | Create {key} error.                                                |
+| CMN_SYS_006 | SystemDatabaseException                      | Error    | Update {key} error. {key} id: {id}                                 |
+| CMN_SYS_007 | SystemDatabaseException                      | Error    | Delete {key} error. {key} id: {id}                                 |
+| CMN_SYS_008 | EmailException                               | Error    | Request to send email to {email} failed.                           |
+| CMN_SYS_009 | SystemServiceUnavailableException            | Error    | Request to {action} failed                                         |
+| CMN_TRX_001 | SystemTransactionException                   | Error    | Start transaction failed                                           |
+| CMN_TRX_002 | SystemTransactionException                   | Error    | End transaction failed                                             |
+| CMN_TRX_003 | SystemTransactionException                   | Error    | Get client failed                                                  |
+*/
+
+enum ErrorCodes {
+  // option allow_alias = true;
+
+  // Empty input: {param}: {value}
+  CMN_VAL_001 = 0;
+  // Violation of limit count [{minimum} - {maximum}]: {param}: {value}
+  CMN_VAL_002 = 1;
+  // Invalid format: {param}: {value}
+  CMN_VAL_003 = 2;
+  // Access denied.
+  CMN_VAL_004 = 3;
+  // Not found user: {param}: {value}
+  CMN_VAL_005 = 4;
+  // Invalid format: password: {value}
+  CMN_VAL_006 = 5;
+  // Duplicated data: {param}: {value}
+  CMN_VAL_007 = 6;
+  // Not found {param}: {value}
+  CMN_VAL_008 = 7;
+  // startAt is bigger than endAt
+  CMN_VAL_009 = 8;
+  // Invalid parameter on Cognito.
+  CMN_COG_001 = 9;
+  // Cognito error.
+  CMN_COG_002 = 10;
+  // Cognito Pool config error.
+  CMN_COG_003 = 11;
+  // Cognito user not found.
+  CMN_COG_004 = 12;
+  // Temporary password cannot be delivered.
+  CMN_COG_005 = 13;
+  // Temporary password doesn't match what the server was expecting.
+  CMN_COG_006 = 14;
+  // Temporary password has expired.
+  CMN_COG_007 = 15;
+  // Token expired
+  CMN_COG_008 = 16;
+  // Network connection exception. Can’t connect to database.
+  CMN_SYS_001 = 17;
+  // Incorrect syntax error.
+  CMN_SYS_002 = 18;
+  // Data not found. id: {param}
+  CMN_SYS_003 = 19;
+  // Database connection timeout.
+  CMN_SYS_004 = 20;
+  // Create {key} error.
+  CMN_SYS_005 = 21;
+  // Update {key} error. {key} id: {id}
+  CMN_SYS_006 = 22;
+  // Delete {key} error. {key} id: {id}
+  CMN_SYS_007 = 23;
+  // Request to send email to {email} failed.
+  CMN_SYS_008 = 24;
+  // Request to {action} failed
+  CMN_SYS_009 = 25;
+  // Start transaction failed
+  CMN_TRX_001 = 26;
+  // End transaction failed
+  CMN_TRX_002 = 27;
+  // Get client failed
+  CMN_TRX_003 = 28;
+}

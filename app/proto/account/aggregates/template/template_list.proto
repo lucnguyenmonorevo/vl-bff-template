@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package account.aggregates.template;
+option go_package="vl-account/proto_generated/account/aggregates/template/;prototemplate";
+
+import "proto/account/aggregates/template/template.proto";
+import "proto/common/grpc/grpc.proto";
+import "proto/common/messaging/messaging.proto";
+
+message TemplateListRequestData {
+  string name = 1;
+  uint32 limit = 2;
+  uint32 offset = 3;
+}
+
+message TemplateListResponseData {
+  repeated Template templates = 1;
+}
+
+message TemplateListRequest {
+  common.grpc.GRPCRequest base = 1;
+  TemplateListRequestData data = 2;
+}
+
+message TemplateListResponse {
+  common.grpc.GRPCResponse base = 1;
+  TemplateListResponseData data = 2;
+}
+
+message TemplateListUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TemplateListRequestData data = 3;
+}
+
+message TemplateListUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  TemplateListResponseData data = 3;
+}
+
+message TemplateListCQRSRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TemplateListRequestData data = 3;
+}
+
+message TemplateListCQRSResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  repeated Template data = 3;
+}

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package notification.aggregates.role_notification;
+option go_package="vl-account/proto_generated/notification/aggregates/role_notification/;protorolenotification";
+
+import "proto/common/grpc/grpc.proto";
+import "proto/common/messaging/messaging.proto";
+
+message RoleNotificationSettingDeleteRequestData {
+  uint64 organization_id = 1;
+  uint64 organizational_role_id = 2;
+}
+
+message RoleNotificationSettingDeleteRequest {
+  common.grpc.GRPCRequest base = 1;
+  RoleNotificationSettingDeleteRequestData data = 2;
+}
+
+message RoleNotificationSettingDeleteResponseData {
+  uint64 organization_id = 1;
+  uint64 organizational_role_id = 2;
+}
+
+message RoleNotificationSettingDeleteResponse {
+  common.grpc.GRPCResponse base = 1;
+  RoleNotificationSettingDeleteResponseData data = 2;
+}
+
+
+message RoleNotificationSettingDeleteUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  RoleNotificationSettingDeleteRequestData data = 3;
+}
+
+message RoleNotificationSettingDeleteUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  RoleNotificationSettingDeleteResponseData data = 3;
+}

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package account.aggregates.template;
+option go_package="vl-account/proto_generated/account/aggregates/template/;prototemplate";
+
+import "proto/account/aggregates/template/template_role_permission_policy.proto";
+import "proto/common/grpc/grpc.proto";
+import "proto/common/messaging/messaging.proto";
+
+message TemplateRolePermissionPolicyDeleteRequestData {
+  uint64 id = 1;
+}
+
+message TemplateRolePermissionPolicyDeleteResponseData {
+  uint64 id = 1;
+}
+
+message TemplateRolePermissionPolicyDeleteRequest {
+  common.grpc.GRPCRequest base = 1;
+  TemplateRolePermissionPolicyDeleteRequestData data = 2;
+}
+
+message TemplateRolePermissionPolicyDeleteResponse {
+  common.grpc.GRPCResponse base = 1;
+  TemplateRolePermissionPolicyDeleteResponseData data = 2;
+}
+
+message TemplateRolePermissionPolicyDeleteUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TemplateRolePermissionPolicyDeleteRequestData data = 3;
+}
+
+message TemplateRolePermissionPolicyDeleteUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  TemplateRolePermissionPolicyDeleteResponseData data = 3;
+}
+
+message TemplateRolePermissionPolicyDeleteCQRSRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TemplateRolePermissionPolicyDeleteRequestData data = 3;
+}
+
+message TemplateRolePermissionPolicyDeleteCQRSResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  TemplateRolePermissionPolicy data = 3;
+}

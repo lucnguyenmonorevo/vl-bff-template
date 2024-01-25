@@ -2,29 +2,54 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"text/template"
+	"log"
+
+	"google.golang.org/grpc/reflect/protoreflect"
+	"google.golang.org/grpc/reflect/protoregistry"
 )
 
 func main() {
-	confMap := map[string]any{}
-	confFunc := map[string]any{}
-	confFunc["Func"] = func(r string) string {
-		return fmt.Sprintf("func %s", r)
-	}
-	confMap["Count"] = "aa"
-	confMap["Material"] = "aa"
-	confMap["funcTest"] = "funcaa"
-	tmpl, err := template.New("test").
-		Funcs(confFunc).
-		Parse(`{{ .Count }} items are made of {{ .Material }}
-			Function: {{Func .funcTest}}
-`)
+	// Load your Proto file and register it with the Protobuf registry
+	protoFile := "path/to/your/proto/file.proto"
+	fileDescriptor, err := loadFileDescriptor(protoFile)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	err = tmpl.Execute(os.Stdout, confMap)
-	if err != nil {
-		panic(err)
+
+	// Use protoreflect to inspect the file descriptor
+	for _, service := range fileDescriptor.GetServices() {
+		fmt.Printf("Service Name: %s\n", service.GetName())
+
+		// Iterate over service methods
+		serviceDesc := service.GetMethods()
+		for _, methodDesc := range serviceDesc {
+			fmt.Printf("  Method Name: %s\n", methodDesc.GetName())
+		}
+
+		// Iterate over service messages (requests and responses)
+		messageTypes := service.GetMethodTypes()
+		for _, messageType := range messageTypes {
+			fmt.Printf("  Message Type: %s\n", messageType)
+		}
 	}
+}
+
+func loadFileDescriptor(protoFile string) (protoreflect.FileDescriptor, error) {
+	// Load the Proto file descriptor using protoregistry
+	var fileDescriptor protoreflect.FileDescriptor
+	if err := protoregistry.GlobalFiles.RangeFiles(func(fd protoreflect.FileDescriptor) bool {
+		if fd.Path() == protoFile {
+			fileDescriptor = fd
+			return false // Stop iterating once we find the file
+		}
+		return true
+	}); err != nil {
+		return nil, fmt.Errorf("failed to load proto file descriptor: %v", err)
+	}
+
+	if fileDescriptor == nil {
+		return nil, fmt.Errorf("proto file not found: %s", protoFile)
+	}
+
+	return fileDescriptor, nil
 }

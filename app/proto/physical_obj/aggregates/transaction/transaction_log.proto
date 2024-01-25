@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package physical_obj.aggregates.transaction;
+option go_package="vl-account/proto_generated/physical_obj/aggregates/transaction/;prototrx";
+
+import "google/protobuf/timestamp.proto";
+
+// common
+
+message TransactionLog {
+  uint64 id = 1;
+  string ep_id = 2;
+  string ep_trx_id = 3;
+  string status = 4;
+  google.protobuf.Timestamp started_at = 5;
+  google.protobuf.Timestamp closed_at = 6;
+  string instance_id = 7;
+  string secondary_ep_id = 9;
+  string cqrs_exec_id = 10;
+}

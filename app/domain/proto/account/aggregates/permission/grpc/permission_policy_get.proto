@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package account.aggregates.permission.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/permission/grpc;protopermissiongrpc";
+
+import "proto/common/grpc/grpc.proto";
+
+message PermissionPolicyGetRequest {
+  common.grpc.GRPCRequest base = 1;
+  PermissionPolicyGetRequestData data = 2;
+}
+
+message PermissionPolicyGetRequestData {
+  uint64 id = 1;
+}
+
+message PermissionPolicyGetResponse {
+  common.grpc.GRPCResponse base = 1;
+  PermissionPolicyGetResponseData data = 2;
+}
+
+message PermissionPolicyGetResponseData {
+  PermissionPolicy permission_policy = 1;
+}
+
+message PermissionPolicy {
+  uint64 id = 1;
+  string role_name = 2;
+  uint64 page_id = 3;
+  uint64 function_id = 4;
+  message Permission {
+    bool create = 1;
+    bool read = 2;
+    bool update = 3;
+    bool delete = 4;
+  }
+  Permission permission = 5;
+}

@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/iancoleman/strcase"
 	"os"
 	"path"
 	"text/template"
@@ -13,7 +14,7 @@ import (
 )
 
 type Generator struct {
-	mdl     *domain.Domain
+	dm      *domain.Domain
 	confMap map[string]any
 	funcMap map[string]any
 }
@@ -43,11 +44,17 @@ func NewGenerator(
 	//}
 	confMap = mergeMaps(confMap, customConfMap)
 	// update funcMap
-	funcMap := template.FuncMap{}
+	funcMap := template.FuncMap{
+		"ToGraphql":    util.ToGraphql,
+		"ToLowerCamel": strcase.ToLowerCamel,
+		"ToCamel":      strcase.ToCamel,
+		"ToSnake":      strcase.ToSnake,
+		"ToKebab":      strcase.ToKebab,
+	}
 	funcMap = mergeMaps(funcMap, customFuncMap)
 
 	return &Generator{
-		mdl:     mdl,
+		dm:      mdl,
 		confMap: confMap,
 		funcMap: funcMap,
 	}, nil

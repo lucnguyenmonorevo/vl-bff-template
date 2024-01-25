@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package account.aggregates.template;
+option go_package="vl-account/proto_generated/account/aggregates/template/;prototemplate";
+
+import "proto/account/aggregates/template/template_role.proto";
+import "proto/common/grpc/grpc.proto";
+import "proto/common/messaging/messaging.proto";
+
+message TemplateRoleListRequestData {
+  uint64 template_id = 1;
+  string name = 2;
+  uint32 limit = 3;
+  uint32 offset = 4;
+}
+
+message TemplateRoleListResponseData {
+  repeated TemplateRole template_roles = 1;
+}
+
+message TemplateRoleListRequest {
+  common.grpc.GRPCRequest base = 1;
+  TemplateRoleListRequestData data = 2;
+}
+
+message TemplateRoleListResponse {
+  common.grpc.GRPCResponse base = 1;
+  TemplateRoleListResponseData data = 2;
+}
+
+message TemplateRoleListUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TemplateRoleListRequestData data = 3;
+}
+
+message TemplateRoleListUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  TemplateRoleListResponseData data = 3;
+}
+
+message TemplateRoleListCQRSRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TemplateRoleListRequestData data = 3;
+}
+
+message TemplateRoleListCQRSResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  repeated TemplateRole data = 3;
+}

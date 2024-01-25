@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package account.aggregates.permission.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/permission/grpc;protopermissiongrpc";
+
+import "proto/common/grpc/grpc.proto";
+
+
+message OrganizationalRolePermissionPolicyUpdateRequest {
+  common.grpc.GRPCRequest base = 1;
+  OrganizationalRolePermissionPolicyUpdateRequestData data = 2;
+}
+
+message OrganizationalRolePermissionPolicyUpdateRequestData {
+  uint64 id = 1;
+  uint64 permission_policy_id = 2;
+  uint64 organizational_role_id = 3;
+}
+
+
+message OrganizationalRolePermissionPolicyUpdateResponse {
+  common.grpc.GRPCResponse base = 1;
+  OrganizationalRolePermissionPolicyUpdateResponseData data = 2;
+}
+
+message OrganizationalRolePermissionPolicyUpdateResponseData {
+  uint64 id = 1;
+}

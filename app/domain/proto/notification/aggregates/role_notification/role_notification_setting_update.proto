@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package notification.aggregates.role_notification;
+option go_package="vl-account/proto_generated/notification/aggregates/role_notification/;protorolenotification";
+
+
+import "proto/notification/aggregates/role_notification/role_notification_setting.proto";
+import "proto/common/grpc/grpc.proto";
+import "proto/common/messaging/messaging.proto";
+
+message RoleNotificationSettingUpdateRequestData {
+  uint32 production_lot_enable = 1;
+  uint32 production_lot_system_internal_notification = 2;
+  uint32 production_lot_email_notification = 3;
+
+  uint32 procurement_lot_enable = 4;
+  uint32 procurement_lot_system_internal_notification = 5;
+  uint32 procurement_lot_email_notification = 6;
+
+
+  uint32 process_memo_enable = 7;
+  uint32 process_memo_system_internal_notification = 8;
+  uint32 process_memo_email_notification = 9;
+
+  uint32 defect_enable = 10;
+  uint32 defect_system_internal_notification = 11;
+  uint32 defect_email_notification = 12;
+
+  uint32 unexpected_stoppage_enable = 13;
+  uint32 unexpected_stoppage_system_internal_notification = 14;
+  uint32 unexpected_stoppage_email_notification = 15;
+
+  uint64 organizational_role_id = 16;
+  uint64 organization_id = 17;
+}
+
+message RoleNotificationSettingUpdateRequest {
+  common.grpc.GRPCRequest base = 1;
+  aggregates.role_notification.RoleNotificationSettingUpdateRequestData data = 2;
+}
+
+message RoleNotificationSettingUpdateResponse {
+  common.grpc.GRPCResponse base = 1;
+  aggregates.role_notification.RoleNotificationSetting data = 2;
+}
+
+
+// Use case
+message RoleNotificationSettingUpdateUseCaseRequestData {
+  uint32 production_lot_enable = 1;
+  uint32 production_lot_system_internal_notification = 2;
+  uint32 production_lot_email_notification = 3;
+
+  uint32 procurement_lot_enable = 4;
+  uint32 procurement_lot_system_internal_notification = 5;
+  uint32 procurement_lot_email_notification = 6;
+
+
+  uint32 process_memo_enable = 7;
+  uint32 process_memo_system_internal_notification = 8;
+  uint32 process_memo_email_notification = 9;
+
+  uint32 defect_enable = 10;
+  uint32 defect_system_internal_notification = 11;
+  uint32 defect_email_notification = 12;
+
+  uint32 unexpected_stoppage_enable = 13;
+  uint32 unexpected_stoppage_system_internal_notification = 14;
+  uint32 unexpected_stoppage_email_notification = 15;
+
+  uint64 organizational_role_id = 16;
+  uint64 organization_id = 17;
+}
+
+message RoleNotificationSettingUpdateUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  aggregates.role_notification.RoleNotificationSettingUpdateUseCaseRequestData data = 3;
+}
+
+message RoleNotificationSettingUpdateUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  aggregates.role_notification.RoleNotificationSetting data = 3;
+}

@@ -1,4 +1,0 @@
-Service name: {{ .service_name }}
-Aggregate name: {{ .aggregate_name }}
-Domain name: {{ .domain_name }}
-Methods name: {{ .methods }}

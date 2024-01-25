@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package account.aggregates.account.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/account/grpc;protoaccountgrpc";
+
+import "proto/common/grpc/grpc.proto";
+
+// Request
+message TokenRefreshRequest {
+  common.grpc.GRPCRequest base = 1;
+  TokenRefreshRequestData data = 2;
+}
+
+message TokenRefreshRequestData {
+  uint64 organization_id = 1;
+  string username = 2;
+  string refresh_token = 3;
+}
+
+// Response
+message TokenRefreshResponse {
+  common.grpc.GRPCResponse base = 1;
+  Token data = 2;
+}
+
+message Token {
+  string id_token = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+  int64 expired_in = 4;
+  uint64 organization_id = 5;
+  string username = 6;
+}

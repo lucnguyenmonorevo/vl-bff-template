@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package general_info.aggregates.pages.use_case;
+option go_package="vl-account/proto_generated/general_info/aggregates/pages/use_case;protopagesusecase";
+
+import "google/protobuf/timestamp.proto";
+import "proto/general_info/aggregates/pages/general/page.proto";
+
+message Page {
+  uint64 id = 1;
+  string name = 2;
+  string description = 3;
+  uint64 page_group_id = 4;
+  string slug = 5;
+  uint32 sequence = 6;
+  string icon = 7;
+  general.PageType type = 8;
+  string key = 9;
+  uint64 page_parent_id = 10;
+  uint32 semantic_lock = 11;
+  string instance_id = 12;
+  string ep_trx_id = 13;
+  string cqrs_exec_id = 14;
+  google.protobuf.Timestamp created_at = 15;
+  string created_by = 16;
+  google.protobuf.Timestamp updated_at = 17;
+  string updated_by = 18;
+  google.protobuf.Timestamp deleted_at = 19;
+  string deleted_by = 20;
+}

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package account.aggregates.permission.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/permission/grpc;protopermissiongrpc";
+
+import "proto/account/aggregates/permission/grpc/subscription_get.proto";
+import "proto/common/grpc/grpc.proto";
+
+message SubscriptionListRequest {
+  common.grpc.GRPCRequest base = 1;
+  SubscriptionListRequestData data = 2;
+}
+
+message SubscriptionListRequestData {
+  int32 limit = 1;
+  int32 offset = 2;
+  repeated uint64 ids = 3;
+  string name = 4;
+  string search_text = 5;
+}
+
+message SubscriptionListResponse {
+  common.grpc.GRPCResponse base = 1;
+  SubscriptionListResponseData data = 2;
+}
+
+message SubscriptionListResponseData {
+  repeated SubscriptionGetResponseData subscriptions = 1;
+}

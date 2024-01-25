@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package account.aggregates.example.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/example/use_case;protoexampleusecase";
+
+import "proto/common/messaging/messaging.proto";
+
+// request
+
+message PermissionVerifyUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  PermissionVerifyUseCaseRequestData data = 3;
+}
+
+message PermissionVerifyUseCaseRequestData {
+  uint64 function_id = 1;
+  uint64 page_id = 2;
+  uint64 organization_id = 3;
+  uint64 user_id = 4;
+  bool is_admin = 5;
+
+  uint64 orchestrator_function_id = 6;
+  bool create = 7;
+  bool read = 8;
+  bool update = 9;
+  bool delete = 10;
+}
+
+// response
+
+message PermissionVerifyUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  bool data = 3;
+}

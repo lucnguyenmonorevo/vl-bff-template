@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package account.aggregates.permission.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/permission/use_case;protopermissionusecase";
+
+import "proto/account/aggregates/permission/use_case/organizational_role.proto";
+import "proto/common/messaging/messaging.proto";
+
+
+message OrganizationalRoleGetUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  OrganizationalRoleGetUseCaseRequestData data = 3;
+}
+
+message OrganizationalRoleGetUseCaseRequestData {
+  uint64 id = 1;
+}
+
+
+message OrganizationalRoleGetUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  OrganizationalRoleGetUseCaseResponseData data = 3;
+}
+
+message OrganizationalRoleGetUseCaseResponseData {
+  OrganizationalRole organizational_role = 1;
+}

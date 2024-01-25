@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package account.aggregates.permission.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/permission/grpc;protopermissiongrpc";
+
+import "proto/common/grpc/grpc.proto";
+
+
+message TemplateOrganizationalRoleDeleteRequest {
+  common.grpc.GRPCRequest base = 1;
+  TemplateOrganizationalRoleDeleteRequestData data = 2;
+}
+
+message TemplateOrganizationalRoleDeleteRequestData {
+  uint64 id = 1;
+}
+
+
+message TemplateOrganizationalRoleDeleteResponse {
+  common.grpc.GRPCResponse base = 1;
+  TemplateOrganizationalRoleDeleteResponseData data = 2;
+}
+
+message TemplateOrganizationalRoleDeleteResponseData {
+  uint64 id = 1;
+}

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package account.aggregates.account.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/account/grpc;protoaccountgrpc";
+
+import "proto/common/grpc/grpc.proto";
+
+// Request
+message BaseUpdateRequest {
+  common.grpc.GRPCRequest base = 1;
+  BaseUpdateRequestData data = 2;
+}
+
+message BaseUpdateRequestData {
+  uint64 id = 1;
+  string name = 2;
+  uint64 organization_id = 3;
+  string tel = 4;
+  string fax = 5;
+}
+
+// Response
+message BaseUpdateResponse {
+  common.grpc.GRPCResponse base = 1;
+  BaseUpdateResponseData data = 2;
+}
+
+message BaseUpdateResponseData {
+  uint64 id = 1;
+}

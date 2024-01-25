@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package account.aggregates.permission.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/permission/grpc;protopermissiongrpc";
+
+import "proto/common/grpc/grpc.proto";
+
+message SubscriptionPermissionPolicyCreateRequest {
+  common.grpc.GRPCRequest base = 1;
+  SubscriptionPermissionPolicyCreateRequestData data = 2;
+}
+
+message SubscriptionPermissionPolicyCreateRequestData {
+  uint64 subscription_id = 1;
+  uint64 permission_policy_id = 2;
+}
+
+message SubscriptionPermissionPolicyCreateResponse {
+  common.grpc.GRPCResponse base = 1;
+  SubscriptionPermissionPolicyCreateResponseData data = 2;
+}
+
+message SubscriptionPermissionPolicyCreateResponseData {
+  uint64 id = 1;
+}

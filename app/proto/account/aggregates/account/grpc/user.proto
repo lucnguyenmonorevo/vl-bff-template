@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package account.aggregates.account.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/account/grpc;protoaccountgrpc";
+
+message User {
+  uint64 id = 1;
+  string name = 2;
+  uint64 organization_id = 3;
+  string organizational_internal_id = 4;
+}

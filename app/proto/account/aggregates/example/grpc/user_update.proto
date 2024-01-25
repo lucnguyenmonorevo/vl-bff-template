@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package account.aggregates.example.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/example/grpc;protoexamplegrpc";
+
+import "proto/common/grpc/grpc.proto";
+import "google/protobuf/timestamp.proto";
+
+// request
+
+message UserUpdateRequest {
+  common.grpc.GRPCRequest base = 1;
+  UserUpdateRequestData data = 2;
+}
+
+message UserUpdateRequestData {
+  uint64 id = 1;
+  string organizational_internal_id = 2;
+}
+
+// response
+
+message UserUpdateResponse {
+  common.grpc.GRPCResponse base = 1;
+  UserUpdateResponseData data = 2;
+}
+
+message UserUpdateResponseData {
+  uint64 id = 1;
+  uint64 organization_id = 2;
+  string organizational_internal_id = 3;
+	google.protobuf.Timestamp updated_at = 4;
+}

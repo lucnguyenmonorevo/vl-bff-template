@@ -1,0 +1,28 @@
+
+syntax = "proto3";
+
+package general_info.aggregates.pages.use_case;
+option go_package="vl-account/proto_generated/general_info/aggregates/pages/use_case;protopagesusecase";
+
+import "proto/general_info/aggregates/pages/use_case/page_group.proto";
+import "proto/common/messaging/messaging.proto";
+
+// request
+
+message PageGroupDeleteUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  PageGroupDeleteUseCaseRequestData data = 3;
+}
+
+message PageGroupDeleteUseCaseRequestData {
+  uint64 id = 1;
+}
+
+// response
+
+message PageGroupDeleteUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  PageGroup data = 3;
+}

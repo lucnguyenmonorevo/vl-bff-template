@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package notification.aggregates.transaction;
+option go_package="vl-account/proto_generated/notification/aggregates/transaction/;prototrx";
+
+import "proto/notification/aggregates/transaction/transaction_log.proto";
+import "proto/common/messaging/messaging.proto";
+
+// UseCase
+
+message TransactionEndUseCaseRequestData {
+  string ep_id = 1;
+  string ep_trx_id = 2;
+  uint64 transaction_log_id = 3;
+}
+
+message TransactionEndUseCaseResponseData {
+  transaction.TransactionLog transaction_log = 2;
+}
+
+message TransactionEndUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  TransactionEndUseCaseRequestData data = 3;
+}
+
+message TransactionEndUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  TransactionEndUseCaseResponseData data = 3;
+}

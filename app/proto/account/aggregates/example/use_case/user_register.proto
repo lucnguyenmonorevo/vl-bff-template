@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package account.aggregates.example.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/example/use_case;protoexampleusecase";
+
+import "proto/account/aggregates/example/use_case/user.proto";
+import "proto/common/messaging/messaging.proto";
+
+// request
+
+message UserRegisterUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  UserRegisterUseCaseRequestData data = 3;
+}
+
+message UserRegisterUseCaseRequestData {
+  uint64 id = 1;
+  uint64 organization_id = 2;
+  string organizational_internal_id = 3;
+  bool is_admin = 4;
+}
+
+// response
+
+message UserRegisterUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  User data = 3;
+}

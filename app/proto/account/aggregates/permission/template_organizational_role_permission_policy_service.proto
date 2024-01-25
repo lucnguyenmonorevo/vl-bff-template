@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package account.aggregates.permission;
+option go_package="vl-account/proto_generated/account/aggregates/permission/;protopermission";
+
+import "proto/account/aggregates/permission/grpc/template_organizational_role_permission_policy_list.proto";
+import "proto/account/aggregates/permission/grpc/template_organizational_role_permission_policy_get.proto";
+import "proto/account/aggregates/permission/grpc/template_organizational_role_permission_policy_delete.proto";
+import "proto/account/aggregates/permission/grpc/template_organizational_role_permission_policy_create.proto";
+import "proto/account/aggregates/permission/grpc/template_organizational_role_permission_policy_update.proto";
+
+service TemplateOrganizationalRolePermissionPolicyService {
+  rpc List(grpc.TemplateOrganizationalRolePermissionPolicyListRequest) returns (grpc.TemplateOrganizationalRolePermissionPolicyListResponse);
+  rpc Get(grpc.TemplateOrganizationalRolePermissionPolicyGetRequest) returns (grpc.TemplateOrganizationalRolePermissionPolicyGetResponse);
+  rpc Delete(grpc.TemplateOrganizationalRolePermissionPolicyDeleteRequest) returns (grpc.TemplateOrganizationalRolePermissionPolicyDeleteResponse);
+  rpc Create(grpc.TemplateOrganizationalRolePermissionPolicyCreateRequest) returns (grpc.TemplateOrganizationalRolePermissionPolicyCreateResponse);
+  rpc Update(grpc.TemplateOrganizationalRolePermissionPolicyUpdateRequest) returns (grpc.TemplateOrganizationalRolePermissionPolicyUpdateResponse);
+}

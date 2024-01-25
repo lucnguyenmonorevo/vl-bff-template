@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package account.aggregates.account.use_case;
+option go_package="vl-account/proto_generated/account/aggregates/account/use_case;protoaccountusecase";
+
+message UserInfo {
+    uint64 user_id = 1;
+    string email = 2;
+    uint64 organization_id = 3;
+    string username = 4;
+}

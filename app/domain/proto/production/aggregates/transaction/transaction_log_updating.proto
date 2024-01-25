@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package production.aggregates.transaction;
+option go_package="vl-account/proto_generated/production/aggregates/transaction/;prototrx";
+
+import "proto/production/aggregates/transaction/transaction_log.proto";
+import "proto/common/messaging/messaging.proto";
+
+// CQRS: TransactionLog update
+
+message TransactionLogUpdatingCQRSRequestData {
+  uint64 id = 1;
+  string ep_id = 2;
+  string ep_trx_id = 3;
+  string status = 4;
+}
+
+message TransactionLogUpdatingCQRSRequest {
+ common.messaging.Transaction transaction = 1;
+ common.messaging.Client client = 2;
+  TransactionLogUpdatingCQRSRequestData data = 3;
+}
+
+message TransactionLogUpdatingCQRSResponse {
+ common.messaging.Transaction transaction = 1;
+ common.messaging.Error error = 2;
+  TransactionLog data = 3;
+}

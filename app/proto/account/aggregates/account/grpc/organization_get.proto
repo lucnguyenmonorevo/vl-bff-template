@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package account.aggregates.account.grpc;
+option go_package="vl-account/proto_generated/account/aggregates/account/grpc;protoaccountgrpc";
+
+import "proto/common/grpc/grpc.proto";
+
+// Request
+message OrganizationGetRequest {
+  common.grpc.GRPCRequest base = 1;
+  OrganizationGetRequestData data = 2;
+}
+
+message OrganizationGetRequestData {
+  uint64 id = 1;
+}
+
+message OrganizationGetResponse {
+  common.grpc.GRPCResponse base = 1;
+  OrganizationGetResponseData data = 2;
+}
+
+// Response
+message OrganizationGetResponseData {
+  uint64 id = 1;
+  string name = 2;
+  OrganizationSetting setting = 3;
+  OrganizationGeneralSetting general_setting = 4;
+}
+
+message OrganizationSetting {
+  uint64 id = 1;
+  uint64 organization_id = 2;
+  uint64 organization_general_setting_id = 3;
+}
+
+message OrganizationGeneralSetting {
+  uint64 id = 1;
+  string furigana = 2;
+  string zipcode = 3;
+  string country = 4;
+  string prefecture = 5;
+  string address = 6;
+  string street_name = 7;
+  string building = 8;
+  string tel = 9;
+  string fax = 10;
+  string email_address = 11;
+  string logo_image = 12;
+  string serial_imprint_image = 13;
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package account.aggregates.permission;
+option go_package="vl-account/proto_generated/account/aggregates/permission/;protopermission";
+
+import "proto/account/aggregates/permission/grpc/organization_subscription_list.proto";
+import "proto/account/aggregates/permission/grpc/organization_subscription_get.proto";
+import "proto/account/aggregates/permission/grpc/organization_subscription_delete.proto";
+import "proto/account/aggregates/permission/grpc/organization_subscription_create.proto";
+import "proto/account/aggregates/permission/grpc/organization_subscription_update.proto";
+
+service OrganizationSubscriptionService {
+  rpc List(grpc.OrganizationSubscriptionListRequest) returns (grpc.OrganizationSubscriptionListResponse);
+  rpc Get(grpc.OrganizationSubscriptionGetRequest) returns (grpc.OrganizationSubscriptionGetResponse);
+  rpc Delete(grpc.OrganizationSubscriptionDeleteRequest) returns (grpc.OrganizationSubscriptionDeleteResponse);
+  rpc Create(grpc.OrganizationSubscriptionCreateRequest) returns (grpc.OrganizationSubscriptionCreateResponse);
+  rpc Update(grpc.OrganizationSubscriptionUpdateRequest) returns (grpc.OrganizationSubscriptionUpdateResponse);
+}

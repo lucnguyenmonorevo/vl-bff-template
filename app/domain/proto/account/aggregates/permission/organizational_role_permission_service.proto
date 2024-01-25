@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package account.aggregates.permission;
+option go_package="vl-account/proto_generated/account/aggregates/permission/;protopermission";
+
+import "proto/account/aggregates/permission/grpc/organizational_role_permission_list.proto";
+
+service OrganizationalRolePermissionService {
+  rpc List(grpc.OrganizationalRolePermissionListRequest) returns (grpc.OrganizationalRolePermissionListResponse);
+}

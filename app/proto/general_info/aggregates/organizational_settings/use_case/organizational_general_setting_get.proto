@@ -1,0 +1,28 @@
+
+syntax = "proto3";
+
+package general_info.aggregates.organizational_settings.use_case;
+option go_package="vl-account/proto_generated/general_info/aggregates/organizational_settings/use_case;protoorganizationalsettingsusecase";
+
+import "proto/general_info/aggregates/organizational_settings/use_case/organizational_general_setting.proto";
+import "proto/common/messaging/messaging.proto";
+
+// request
+
+message OrganizationalGeneralSettingGetUseCaseRequest {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Client client = 2;
+  OrganizationalGeneralSettingGetUseCaseRequestData data = 3;
+}
+
+message OrganizationalGeneralSettingGetUseCaseRequestData {
+  uint64 id = 1;
+}
+
+// response
+
+message OrganizationalGeneralSettingGetUseCaseResponse {
+  common.messaging.Transaction transaction = 1;
+  common.messaging.Error error = 2;
+  OrganizationalGeneralSetting data = 3;
+}
