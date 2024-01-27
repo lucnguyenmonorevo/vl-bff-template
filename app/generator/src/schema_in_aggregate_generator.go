@@ -11,6 +11,7 @@ func (s *srcGenerator) generateSchemaInAggregates(domain []*domain.Domain) error
 	customConfMap := make(map[string]any)
 	customConfMap["import_schemas"] = s.getSchemaInAggregatesImport()
 	customConfMap["type_defs"] = s.getSchemaInAggregatesTypeDefs()
+	customConfMap["schemas_to_type_defs"] = s.convertSchemaToTypeDef()
 	customFuncMap := make(map[string]any)
 	gen, err := generator.NewGenerator(domain[0], customConfMap, customFuncMap)
 	if err != nil {
@@ -30,7 +31,7 @@ func (s *srcGenerator) getSchemaInAggregatesImport() string {
 		aggregatePathName := strcase.ToSnake(domain.AggregateName)
 		domainPathName := strcase.ToSnake(domain.DomainName)
 		domainName := strcase.ToLowerCamel(domain.DomainName)
-		str := fmt.Sprintf(`import { %sTypeDefs } from './%s/%s/schema'
+		str := fmt.Sprintf(`import { %sSchema } from './%s/%s/schema'
 `, domainName, aggregatePathName, domainPathName)
 		rt += str
 	}
@@ -39,13 +40,26 @@ func (s *srcGenerator) getSchemaInAggregatesImport() string {
 
 func (s *srcGenerator) getSchemaInAggregatesTypeDefs() string {
 	rt := ""
-	comma := ", "
+	comma := `,`
 	for i, domain := range s.Domains {
 		if i == len(s.Domains)-1 {
-			comma = ""
+			comma = `,
+	`
 		}
 		domainName := strcase.ToLowerCamel(domain.DomainName)
-		str := fmt.Sprintf(`%sTypeDefs%s`, domainName, comma)
+		str := fmt.Sprintf(`
+	%sTypeDef%s`, domainName, comma)
+		rt += str
+	}
+	return rt
+}
+
+func (s *srcGenerator) convertSchemaToTypeDef() string {
+	rt := ""
+	for _, domain := range s.Domains {
+		domainName := strcase.ToLowerCamel(domain.DomainName)
+		str := fmt.Sprintf(`const %sTypeDef = gql(%sSchema)
+`, domainName, domainName)
 		rt += str
 	}
 	return rt

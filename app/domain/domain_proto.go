@@ -9,10 +9,12 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"vl-template/app/config"
 	"vl-template/app/generator/util"
 )
 
 type DomainProtoReader struct {
+	Config     *config.Config
 	DomainsMap map[string][]*Domain
 }
 
@@ -22,19 +24,13 @@ func NewDomainProtoReader() *DomainProtoReader {
 	}
 }
 
-func (r *DomainProtoReader) GetDomains(protoPath string) error {
-	dirs, err := os.ReadDir(protoPath)
-	if err != nil {
-		return err
-	}
-	for _, dir := range dirs {
-		dirName := dir.Name()
-		servicePath := path.Join(protoPath, dirName)
-		domains, err := r.getDomainsByService(servicePath)
+func (r *DomainProtoReader) GetDomains(dirs map[string]string) error {
+	for serviceName, dir := range dirs {
+		domains, err := r.getDomainsByService(dir)
 		if err != nil {
 			return err
 		}
-		r.DomainsMap[dirName] = domains
+		r.DomainsMap[serviceName] = domains
 	}
 	r.cleanData()
 	return nil
@@ -47,6 +43,12 @@ func (r *DomainProtoReader) getDomainsByService(servicePath string) ([]*Domain, 
 		return nil, err
 	}
 	for _, domainPath := range domainPaths {
+		if ok, err := r.isDomain(domainPath); !ok {
+			continue
+			if err != nil {
+				fmt.Println("[Error] Err about domain: ", err)
+			}
+		}
 		domain, err := r.getDomain(domainPath)
 		if err != nil {
 			return nil, err
@@ -192,7 +194,7 @@ func (r *DomainProtoReader) getImportPath(filePath string) ([]string, error) {
 		// Check if the line contains a message definition
 		messageMatch := importRegex.FindStringSubmatch(line)
 		if len(messageMatch) > 0 {
-			rt = append(rt, "app/domain/"+messageMatch[1])
+			rt = append(rt, path.Join(strings.Split(filePath, "/")[0], messageMatch[1]))
 		}
 	}
 	return rt, nil
@@ -201,6 +203,9 @@ func (r *DomainProtoReader) getImportPath(filePath string) ([]string, error) {
 func (r *DomainProtoReader) getRelatedPayload(paths []string, payloadName string) ([]*Payload, error) {
 	payloads := make([]*Payload, 0)
 	for _, path := range paths {
+		if !r.isValidPath(path) {
+			continue
+		}
 		importPaths, err := r.getImportPath(path)
 		if err != nil {
 			importPaths = []string{}
@@ -214,7 +219,7 @@ func (r *DomainProtoReader) getRelatedPayload(paths []string, payloadName string
 
 		for _, payload := range payloads {
 			for _, field := range payload.Data {
-				if !util.IsProtoType(field.Type) {
+				if !util.IsProtoType(field.Type) && field.Type != payloadName {
 					addedPayloads, err := r.getRelatedPayload(importPaths, field.Type)
 					if err != nil {
 						return nil, err
@@ -392,4 +397,39 @@ func deleteElements(slice []*Payload, indices []int) []*Payload {
 	}
 
 	return slice
+}
+
+func (r *DomainProtoReader) isValidPath(path string) bool {
+	if strings.Contains(path, "google/protobuf/timestamp.proto") {
+		return false
+	}
+	if strings.Contains(path, "proto/common/grpc/grpc.proto") {
+		return false
+	}
+	if strings.Contains(path, "common/messaging/messaging.proto") {
+		return false
+	}
+	return true
+}
+
+func (r *DomainProtoReader) isDomain(path string) (bool, error) {
+	// TODO: update ignore list
+	ignorePaths := []string{
+		"account/example",
+	}
+	for _, ignorePath := range ignorePaths {
+		if strings.Contains(path, ignorePath) {
+			return false, nil
+		}
+	}
+	importPaths, err := r.getImportPath(path)
+	if err != nil {
+		return false, err
+	}
+	for _, importPath := range importPaths {
+		if strings.Contains(importPath, "/grpc/") {
+			return true, nil
+		}
+	}
+	return false, nil
 }

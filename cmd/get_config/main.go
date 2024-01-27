@@ -36,9 +36,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	specDir := "app/domain/proto"
 	domainReader := domain.NewDomainReader(conf)
-	if err = domainReader.ReadFromProto(specDir); err != nil {
+	if err = domainReader.ReadFromProto(); err != nil {
 		log.Fatalln("can't read domain reader")
 	}
 

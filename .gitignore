@@ -124,11 +124,40 @@ __debug_bin*
 # Air temporary directory
 .tmp/
 
-# JetBrains dev tool
-.idea
-
 # Generated directory
 generated
 
 # default copy destination directory
 copy_dest
+
+# External repository directries
+/vl-frontend/
+# TODO(a_fukuhara@monorevo.jp): DEPRECATED
+/vl-bff/
+/vl-bff-router/
+/vl-bff-account/
+/vl-bff-business/
+/vl-bff-general-info/
+/vl-bff-physical-obj/
+/vl-bff-procurement/
+/vl-bff-production/
+/vl-bff-notification/
+/vl-account/
+/vl-business/
+/vl-general-info/
+/vl-notification/
+/vl-physical-obj/
+/vl-procurement/
+/vl-production/
+/vl-batch/
+/vl-e2e/
+/vl-raijin/
+
+# Temporary .ssh directory
+/.ssh/
+
+# JetBrains dev tool
+.idea
+
+# Each developer should set local environment variables.
+/docker-compose.yml

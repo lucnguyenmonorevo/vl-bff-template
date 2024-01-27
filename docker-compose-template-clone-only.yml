@@ -1,0 +1,215 @@
+version: "3.9"
+
+services:
+  account-setup:
+    container_name: vl-account-setup
+    hostname: account-setup
+    build:
+      context: .
+      dockerfile: ./infrastructures/setup/Dockerfile
+    environment:
+      BIND_MOUNT_HOST_DIR: ${PWD}
+      BIND_MOUNT_CONTAINER_DIR: /volume
+      REPOSITORY_NAME: vl-account
+      BRANCH_NAME: dev
+      #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
+      COMPOSE_FILE_NAME: docker-compose.yml
+      SERVICE_NAME: frontend
+      BUILD: true
+      DEPENDENCY_SERVICE_NAMES: ""
+      SETUP_ONLY: true
+    volumes:
+      - .:/volume:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:cached
+    networks:
+      - vl-bridge
+
+  business-setup:
+    container_name: vl-business-setup
+    hostname: business-setup
+    build:
+      context: .
+      dockerfile: ./infrastructures/setup/Dockerfile
+    environment:
+      BIND_MOUNT_HOST_DIR: ${PWD}
+      BIND_MOUNT_CONTAINER_DIR: /volume
+      REPOSITORY_NAME: vl-business
+      BRANCH_NAME: dev
+      #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
+      COMPOSE_FILE_NAME: docker-compose.yml
+      SERVICE_NAME: frontend
+      BUILD: true
+      DEPENDENCY_SERVICE_NAMES: ""
+      SETUP_ONLY: true
+    volumes:
+      - .:/volume:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:cached
+    networks:
+      - vl-bridge
+
+  physical-obj-setup:
+    container_name: vl-physical-obj-setup
+    hostname: physical-obj-setup
+    build:
+      context: .
+      dockerfile: ./infrastructures/setup/Dockerfile
+    environment:
+      BIND_MOUNT_HOST_DIR: ${PWD}
+      BIND_MOUNT_CONTAINER_DIR: /volume
+      REPOSITORY_NAME: vl-physical-obj
+      BRANCH_NAME: dev
+      #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
+      COMPOSE_FILE_NAME: docker-compose.yml
+      SERVICE_NAME: frontend
+      BUILD: true
+      DEPENDENCY_SERVICE_NAMES: ""
+      SETUP_ONLY: true
+    volumes:
+      - .:/volume:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:cached
+    networks:
+      - vl-bridge
+
+  production-setup:
+    container_name: vl-production-setup
+    hostname: production-setup
+    build:
+      context: .
+      dockerfile: ./infrastructures/setup/Dockerfile
+    environment:
+      BIND_MOUNT_HOST_DIR: ${PWD}
+      BIND_MOUNT_CONTAINER_DIR: /volume
+      REPOSITORY_NAME: vl-production
+      BRANCH_NAME: dev
+      #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
+      COMPOSE_FILE_NAME: docker-compose.yml
+      SERVICE_NAME: frontend
+      BUILD: true
+      DEPENDENCY_SERVICE_NAMES: ""
+      SETUP_ONLY: true
+    volumes:
+      - .:/volume:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:cached
+    networks:
+      - vl-bridge
+
+  procurement-setup:
+    container_name: vl-procurement-setup
+    hostname: procurement-setup
+    build:
+      context: .
+      dockerfile: ./infrastructures/setup/Dockerfile
+    environment:
+      BIND_MOUNT_HOST_DIR: ${PWD}
+      BIND_MOUNT_CONTAINER_DIR: /volume
+      REPOSITORY_NAME: vl-procurement
+      BRANCH_NAME: dev
+      #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
+      COMPOSE_FILE_NAME: docker-compose.yml
+      SERVICE_NAME: frontend
+      BUILD: true
+      DEPENDENCY_SERVICE_NAMES: ""
+      SETUP_ONLY: true
+    volumes:
+      - .:/volume:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:cached
+    networks:
+      - vl-bridge
+
+  notification-setup:
+    container_name: vl-notification-setup
+    hostname: notification-setup
+    build:
+      context: .
+      dockerfile: ./infrastructures/setup/Dockerfile
+    environment:
+      BIND_MOUNT_HOST_DIR: ${PWD}
+      BIND_MOUNT_CONTAINER_DIR: /volume
+      REPOSITORY_NAME: vl-notification
+      BRANCH_NAME: dev
+      #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
+      COMPOSE_FILE_NAME: docker-compose.yml
+      SERVICE_NAME: frontend
+      BUILD: true
+      DEPENDENCY_SERVICE_NAMES: ""
+      SETUP_ONLY: true
+    volumes:
+      - .:/volume:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:cached
+    networks:
+      - vl-bridge
+
+  general-info-setup:
+    container_name: vl-general-info-setup
+    hostname: general-info-setup
+    build:
+      context: .
+      dockerfile: ./infrastructures/setup/Dockerfile
+    environment:
+      BIND_MOUNT_HOST_DIR: ${PWD}
+      BIND_MOUNT_CONTAINER_DIR: /volume
+      REPOSITORY_NAME: vl-general-info
+      BRANCH_NAME: dev
+      #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
+      COMPOSE_FILE_NAME: docker-compose.yml
+      SERVICE_NAME: frontend
+      BUILD: true
+      DEPENDENCY_SERVICE_NAMES: ""
+      SETUP_ONLY: true
+    volumes:
+      - .:/volume:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:cached
+    networks:
+      - vl-bridge
+
+  bff-account-setup:
+    container_name: vl-bff-account-setup
+    hostname: bff-account-setup
+    build:
+      context: .
+      dockerfile: ./infrastructures/setup/Dockerfile
+    environment:
+      BIND_MOUNT_HOST_DIR: ${PWD}
+      BIND_MOUNT_CONTAINER_DIR: /volume
+      REPOSITORY_NAME: vl-bff-account
+      BRANCH_NAME: dev
+      #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
+      COMPOSE_FILE_NAME: docker-compose.yml
+      SERVICE_NAME: frontend
+      BUILD: true
+      DEPENDENCY_SERVICE_NAMES: ""
+      SETUP_ONLY: true
+    volumes:
+      - .:/volume:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:cached
+    networks:
+      - vl-bridge
+
+  all:
+    container_name: vl-all
+    image: tianon/true:multiarch
+    depends_on:
+      account-setup:
+        condition: service_started
+      business-setup:
+        condition: service_started
+      general-info-setup:
+        condition: service_started
+      physical-obj-setup:
+        condition: service_started
+      procurement-setup:
+        condition: service_started
+      production-setup:
+        condition: service_started
+      notification-setup:
+        condition: service_started
+
+      bff-account-setup:
+        condition: service_started
+    networks:
+      - vl-bridge
+
+networks:
+  vl-bridge:
+    driver: bridge
+    external: true

@@ -4,7 +4,7 @@
 # Request/Response for {{ $method.name }} method
 {{ range $method_request := $method_requests -}}
 {{ $request_data := $method_request.data -}}
-input {{ ToCamel $method_request.name }} {
+input {{ $method_request.name }} {
 {{- range $field := $request_data }}
     {{ ToLowerCamel $field.name }}: {{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
 {{ end }}
@@ -15,7 +15,7 @@ input {{ ToCamel $method_request.name }} {
 {{- $method_responses := $method.responses -}}
 {{ range $method_response := $method_responses -}}
 {{ $response_data := $method_response.data -}}
-type {{ ToCamel $method_response.name }} {
+type {{ $method_response.name }} {
 {{- range $field := $response_data }}
     {{ ToLowerCamel $field.name }}: {{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
 {{ end }}
@@ -29,7 +29,7 @@ type {{ ToCamel $method_response.name }} {
 {{ $method_requests := $method.requests -}}
 {{ range $method_request := $method_requests -}}
 {{ $request_data := $method_request.data -}}
-input {{ ToCamel $method_request.name }} {
+input {{ $method_request.name }} {
 {{- range $field := $request_data }}
     {{ ToLowerCamel $field.name }}: {{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
 {{ end }}
@@ -40,7 +40,7 @@ input {{ ToCamel $method_request.name }} {
 {{ $method_responses := $method.responses -}}
 {{ range $method_response := $method_responses -}}
 {{ $response_data := $method_response.data -}}
-type {{ ToCamel $method_response.name }} {
+type {{ $method_response.name }} {
 {{- range $field := $response_data }}
     {{ ToLowerCamel $field.name }}: {{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
 {{ end }}
@@ -51,22 +51,22 @@ type {{ ToCamel $method_response.name }} {
 
 {{ if $_.query_methods -}}
 # Query
-type Query {
+extend type Query {
 {{- range $method := $_.query_methods -}}
 {{ $request_name := $method.request_name -}}
 {{ $response_name := $method.response_name }}
-    {{ ToLowerCamel $method.name }}(input: {{ $request_name }}): {{ $response_name }}
+    {{ ToLowerCamel $_.domain_name }}{{ ToCamel $method.name }}(input: {{ $request_name }}): {{ $response_name }}
 {{- end }}
 }
 {{- end}}
 
 {{ if $_.mutation_methods -}}
 # Mutation
-type Mutation {
+extend type Mutation {
 {{- range $method := $_.mutation_methods -}}
 {{ $request_name := $method.request_name -}}
 {{ $response_name := $method.response_name }}
-    {{ ToLowerCamel $method.name }}(input: {{ $request_name }}): {{ $response_name }}
+    {{ ToLowerCamel $_.domain_name }}{{ ToCamel $method.name }}(input: {{ $request_name }}): {{ $response_name }}
 {{- end }}
 }
 {{- end}}

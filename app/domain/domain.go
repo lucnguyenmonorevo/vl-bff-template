@@ -55,9 +55,17 @@ func (r *DomainReader) ReadFromSpec(dir string) error {
 	return nil
 }
 
-func (r *DomainReader) ReadFromProto(dir string) error {
+func (r *DomainReader) ReadFromProto() error {
 	domainsSpecReader := NewDomainProtoReader()
-	if err := domainsSpecReader.GetDomains(dir); err != nil {
+	dirs := map[string]string{}
+	dirs["account"] = "vl-account/proto/account"
+	dirs["business"] = "vl-business/proto/business"
+	dirs["general_info"] = "vl-general-info/proto/general_info"
+	dirs["notification"] = "vl-notification/proto/notification"
+	dirs["physical_obj"] = "vl-physical-obj/proto/physical_obj"
+	dirs["procurement"] = "vl-procurement/proto/procurement"
+	dirs["production"] = "vl-production/proto/production"
+	if err := domainsSpecReader.GetDomains(dirs); err != nil {
 		return err
 	}
 	r.DomainsMap = MergeDomainsMap(r.DomainsMap, domainsSpecReader.DomainsMap)
