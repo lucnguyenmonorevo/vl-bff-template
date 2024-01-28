@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package general_info.aggregates.personal_setting;
-option go_package="vl-account/proto_generated/general_info/aggregates/personal_setting;protopersonalsetting";
-
-message Bookmark {
-  uint64 id = 1;
-  uint64 user_id = 2;
-}

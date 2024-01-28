@@ -10,6 +10,7 @@ type Domain struct {
 	DomainName      string    `json:"domain_name" mapstructure:"domain_name"`
 	QueryMethods    []*Method `json:"query_methods" mapstructure:"query_methods"`
 	MutationMethods []*Method `json:"mutation_methods" mapstructure:"mutation_methods"`
+	Enums           []*Enum   `json:"enums" mapstructure:"enums"`
 }
 
 type Method struct {
@@ -31,6 +32,11 @@ type PayloadData struct {
 	Name      string `json:"name" mapstructure:"name"`
 	Type      string `json:"type" mapstructure:"type"`
 	IsNotNull bool   `json:"is_not_null" mapstructure:"is_not_null"`
+}
+
+type Enum struct {
+	Name   string   `json:"name" mapstructure:"name"`
+	Values []string `json:"values" mapstructure:"values"`
 }
 
 type DomainReader struct {
@@ -60,9 +66,9 @@ func (r *DomainReader) ReadFromProto() error {
 	dirs := map[string]string{}
 	dirs["account"] = "vl-account/proto/account"
 	dirs["business"] = "vl-business/proto/business"
-	dirs["general_info"] = "vl-general-info/proto/general_info"
+	dirs["general-info"] = "vl-general-info/proto/general_info"
 	dirs["notification"] = "vl-notification/proto/notification"
-	dirs["physical_obj"] = "vl-physical-obj/proto/physical_obj"
+	dirs["physical-obj"] = "vl-physical-obj/proto/physical_obj"
 	dirs["procurement"] = "vl-procurement/proto/procurement"
 	dirs["production"] = "vl-production/proto/production"
 	if err := domainsSpecReader.GetDomains(dirs); err != nil {

@@ -44,7 +44,7 @@ func (s *srcGenerator) generate(domain *domain.Domain) error {
 	if err != nil {
 		return err
 	}
-	dirPath := "vl-{{ ToSnake .service_name }}/src/aggregates/{{ ToSnake .aggregate_name }}/{{ ToSnake .domain_name }}/graphql"
+	dirPath := "vl-bff-{{ ToKebab .service_name }}/src/aggregates/{{ ToSnake .aggregate_name }}/{{ ToSnake .domain_name }}/graphql"
 	fileName := "{{ ToSnake .domain_name }}.schemas.graphql"
 	if err := gen.GenerateFileByFile(dirPath, fileName, fileName, false); err != nil {
 		return err

@@ -12,7 +12,7 @@ func (s *srcGenerator) generateSchemaInDomain(domain *domain.Domain) error {
 	if err != nil {
 		return err
 	}
-	dirPath := "vl-{{ ToSnake .service_name }}/src/aggregates/{{ ToSnake .aggregate_name }}/{{ ToSnake .domain_name }}"
+	dirPath := "vl-bff-{{ ToKebab .service_name }}/src/aggregates/{{ ToSnake .aggregate_name }}/{{ ToSnake .domain_name }}"
 	fileName := "schema.ts"
 	if err := gen.GenerateFileByFile(dirPath, fileName, fileName, false); err != nil {
 		return err

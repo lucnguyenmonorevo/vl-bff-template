@@ -1,0 +1,79 @@
+{{ $_ := . -}}
+{{- range $enum := $_.enums -}}
+enum {{ $enum.name }} {
+{{- range $value := $enum.values }}
+    {{ $value }}{{ end }}
+}
+{{ end -}}
+
+{{- range $method := $_.query_methods -}}
+{{- $method_requests := $method.requests -}}
+# Request/Response for {{ $method.name }} method
+{{ range $method_request := $method_requests -}}
+{{ $request_data := $method_request.data -}}
+input {{ $method_request.name }} {
+{{- range $field := $request_data }}
+    {{ ToLowerCamel $field.name }}: {{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
+{{ end }}
+}
+
+{{ end -}}
+
+{{- $method_responses := $method.responses -}}
+{{ range $method_response := $method_responses -}}
+{{ $response_data := $method_response.data -}}
+type {{ $method_response.name }} {
+{{- range $field := $response_data }}
+    {{ ToLowerCamel $field.name }}: {{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
+{{ end }}
+}
+
+{{ end -}}
+{{ end }}
+
+{{- range $method := $_.mutation_methods -}}
+# Request/Response for {{ $method.name }} method
+{{ $method_requests := $method.requests -}}
+{{ range $method_request := $method_requests -}}
+{{ $request_data := $method_request.data -}}
+input {{ $method_request.name }} {
+{{- range $field := $request_data }}
+    {{ ToLowerCamel $field.name }}: {{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
+{{ end }}
+}
+
+{{ end -}}
+
+{{ $method_responses := $method.responses -}}
+{{ range $method_response := $method_responses -}}
+{{ $response_data := $method_response.data -}}
+type {{ $method_response.name }} {
+{{- range $field := $response_data }}
+    {{ ToLowerCamel $field.name }}: {{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
+{{ end }}
+}
+
+{{ end -}}
+{{ end -}}
+
+{{ if $_.query_methods -}}
+# Query
+extend type Query {
+{{- range $method := $_.query_methods -}}
+{{ $request_name := $method.request_name -}}
+{{ $response_name := $method.response_name }}
+    {{ $method.name }}(input: {{ $request_name }}): {{ $response_name }}
+{{- end }}
+}
+{{- end}}
+
+{{ if $_.mutation_methods -}}
+# Mutation
+extend type Mutation {
+{{- range $method := $_.mutation_methods -}}
+{{ $request_name := $method.request_name -}}
+{{ $response_name := $method.response_name }}
+    {{ $method.name }}(input: {{ $request_name }}): {{ $response_name }}
+{{- end }}
+}
+{{- end}}

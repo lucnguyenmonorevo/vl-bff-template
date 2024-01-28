@@ -32,6 +32,7 @@ func (r *DomainProtoReader) GetDomains(dirs map[string]string) error {
 		}
 		r.DomainsMap[serviceName] = domains
 	}
+	r.updateDomain()
 	r.cleanData()
 	return nil
 }
@@ -87,6 +88,7 @@ func (r *DomainProtoReader) getDomainPaths(dir string) ([]string, error) {
 func (r *DomainProtoReader) getDomain(filePath string) (*Domain, error) {
 	queryMethods := make([]*Method, 0)
 	mutationMethods := make([]*Method, 0)
+	enums := make([]*Enum, 0)
 	domainName := ""
 	serviceName, aggregateName := getServiceFromPath(filePath)
 	content, err := ioutil.ReadFile(filePath)
@@ -128,11 +130,13 @@ func (r *DomainProtoReader) getDomain(filePath string) (*Domain, error) {
 				responseType := strings.TrimSpace(methodMatch[3])
 				responseName := getLastSplit(responseType, ".")
 
-				requests, err := r.getRelatedPayload(relatedPaths, requestName)
+				requests, tmpEnums, err := r.getRelatedPayload(relatedPaths, requestName)
+				enums = append(enums, tmpEnums...)
 				if err != nil {
 					return nil, err
 				}
-				responses, err := r.getRelatedPayload(relatedPaths, responseName)
+				responses, tmpEnums, err := r.getRelatedPayload(relatedPaths, responseName)
+				enums = append(enums, tmpEnums...)
 				if err != nil {
 					return nil, err
 				}
@@ -167,6 +171,7 @@ func (r *DomainProtoReader) getDomain(filePath string) (*Domain, error) {
 		DomainName:      domainName,
 		QueryMethods:    queryMethods,
 		MutationMethods: mutationMethods,
+		Enums:           enums,
 	}, nil
 }
 
@@ -200,8 +205,9 @@ func (r *DomainProtoReader) getImportPath(filePath string) ([]string, error) {
 	return rt, nil
 }
 
-func (r *DomainProtoReader) getRelatedPayload(paths []string, payloadName string) ([]*Payload, error) {
+func (r *DomainProtoReader) getRelatedPayload(paths []string, payloadName string) ([]*Payload, []*Enum, error) {
 	payloads := make([]*Payload, 0)
+	enums := make([]*Enum, 0)
 	for _, path := range paths {
 		if !r.isValidPath(path) {
 			continue
@@ -211,38 +217,45 @@ func (r *DomainProtoReader) getRelatedPayload(paths []string, payloadName string
 			importPaths = []string{}
 		}
 		importPaths = append(importPaths, path)
-		tmpPayloads, err := r.getGrpc(path, payloadName)
+		tmpPayloads, tmpEnums, err := r.getGrpc(path, payloadName)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		payloads = append(payloads, tmpPayloads...)
+		enums = append(enums, tmpEnums...)
 
 		for _, payload := range payloads {
 			for _, field := range payload.Data {
 				if !util.IsProtoType(field.Type) && field.Type != payloadName {
-					addedPayloads, err := r.getRelatedPayload(importPaths, field.Type)
+					addedPayloads, addEnums, err := r.getRelatedPayload(importPaths, field.Type)
 					if err != nil {
-						return nil, err
+						return nil, nil, err
 					}
 					payloads = append(payloads, addedPayloads...)
+					enums = append(enums, addEnums...)
 				}
 			}
 		}
 	}
-	return payloads, nil
+	return payloads, enums, nil
 }
 
-func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Payload, error) {
+func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Payload, []*Enum, error) {
 	payloads := make([]*Payload, 0)
+	enums := make([]*Enum, 0)
 	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Define regular expressions for extracting message names and fields
 	messageNameRegex := regexp.MustCompile(`message (\w+) {`)
 	fieldRegex := regexp.MustCompile(`(\w+)\s+(\w+)\s*=\s*(\d+);`)
+
+	// Define regular expressions for extracting enum names and fields
+	enumNameRegex := regexp.MustCompile(`enum (\w+) {`)
+	enumFieldRegex := regexp.MustCompile(`(\w+)\s*=\s*(\d+);`)
 
 	// Split the file content by lines
 	lines := strings.Split(string(content), "\n")
@@ -251,15 +264,24 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 	var currentMessageName string
 	var inMessage bool
 
+	// Variables to keep track of the current enum
+	var currentEnumName string
+	var inEnum bool
+
 	payload := &Payload{
 		Data: []*PayloadData{},
 	}
+
+	enum := &Enum{
+		Values: []string{},
+	}
 	// Iterate through each line
 	for _, line := range lines {
+		/* Handle message */
 		// Check if the line contains a message definition
-		messageMatch := messageNameRegex.FindStringSubmatch(line)
-		if len(messageMatch) > 0 {
-			currentMessageName = messageMatch[1]
+		enumMatch := messageNameRegex.FindStringSubmatch(line)
+		if len(enumMatch) > 0 {
+			currentMessageName = enumMatch[1]
 			if currentMessageName != payloadName {
 				continue
 			}
@@ -300,8 +322,39 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 				Data: []*PayloadData{},
 			}
 		}
+
+		/* Handle enum */
+		// Check if the line contains a message definition
+		enumMatch = enumNameRegex.FindStringSubmatch(line)
+		if len(enumMatch) > 0 {
+			currentEnumName = enumMatch[1]
+			if currentEnumName != payloadName {
+				continue
+			}
+			inEnum = true
+			enum.Name = currentEnumName
+			continue
+		}
+
+		// Check if the line contains a field definition
+		if inEnum {
+			fieldMatch := enumFieldRegex.FindStringSubmatch(line)
+			if len(fieldMatch) > 0 {
+				fieldName := fieldMatch[1]
+				enum.Values = append(enum.Values, fieldName)
+			}
+		}
+
+		// Check if the line ends the current message
+		if strings.Contains(line, "}") && inEnum {
+			inEnum = false
+			enums = append(enums, enum)
+			enum = &Enum{
+				Values: []string{},
+			}
+		}
 	}
-	return payloads, nil
+	return payloads, enums, nil
 }
 
 func getServiceFromPath(path string) (string, string) {
@@ -311,7 +364,7 @@ func getServiceFromPath(path string) (string, string) {
 	for i := range arr {
 		switch arr[i] {
 		case "proto":
-			serviceName = arr[i+1]
+			serviceName = strcase.ToKebab(arr[i+1])
 		case "aggregates":
 			aggregateName = arr[i+1]
 		}
@@ -328,67 +381,99 @@ func getMethodType(methodName string) string {
 }
 
 func (r *DomainProtoReader) cleanData() {
-	payloadMapRequest := map[string]bool{}
-	payloadMapResponse := map[string]bool{}
+	payloadRequestMap := map[string]bool{}
+	payloadResponseMap := map[string]bool{}
+	enumMap := map[string]bool{}
 	//aggregatePayloadMap := map[string]map[string]bool{}
 	for _, domains := range r.DomainsMap {
 		for _, domain := range domains {
+			serviceName := domain.ServiceName
+			domainName := domain.DomainName
 			for _, queryMethod := range domain.QueryMethods {
 				indices := make([]int, 0)
 				for i, request := range queryMethod.Requests {
-					if payloadMapRequest[request.PayloadName] {
+					key := serviceName + domainName + request.PayloadName
+					if payloadRequestMap[key] {
 						indices = append(indices, i)
 						continue
 					}
-					payloadMapRequest[request.PayloadName] = true
+					payloadRequestMap[key] = true
 				}
 				if len(indices) > 0 {
-					queryMethod.Requests = deleteElements(queryMethod.Requests, indices)
+					queryMethod.Requests = deletePayloadElements(queryMethod.Requests, indices)
 				}
 
 				indices = make([]int, 0)
 				for i, response := range queryMethod.Responses {
-					if payloadMapResponse[response.PayloadName] {
+					key := serviceName + domainName + response.PayloadName
+					if payloadResponseMap[key] {
 						indices = append(indices, i)
 						continue
 					}
-					payloadMapResponse[response.PayloadName] = true
+					payloadResponseMap[key] = true
 				}
 				if len(indices) > 0 {
-					queryMethod.Responses = deleteElements(queryMethod.Responses, indices)
+					queryMethod.Responses = deletePayloadElements(queryMethod.Responses, indices)
 				}
 			}
 
 			for _, mutationMethod := range domain.MutationMethods {
 				indices := make([]int, 0)
 				for i, request := range mutationMethod.Requests {
-					if payloadMapRequest[request.PayloadName] {
+					key := serviceName + domainName + request.PayloadName
+					if payloadRequestMap[key] {
 						indices = append(indices, i)
 						continue
 					}
-					payloadMapRequest[request.PayloadName] = true
+					payloadRequestMap[key] = true
 				}
 				if len(indices) > 0 {
-					mutationMethod.Requests = deleteElements(mutationMethod.Requests, indices)
+					mutationMethod.Requests = deletePayloadElements(mutationMethod.Requests, indices)
 				}
 				indices = make([]int, 0)
 				for i, response := range mutationMethod.Responses {
-					if payloadMapResponse[response.PayloadName] {
+					key := serviceName + domainName + response.PayloadName
+					if payloadResponseMap[key] {
 						indices = append(indices, i)
 						continue
 					}
-					payloadMapResponse[response.PayloadName] = true
+					payloadResponseMap[key] = true
 				}
 
 				if len(indices) > 0 {
-					mutationMethod.Responses = deleteElements(mutationMethod.Responses, indices)
+					mutationMethod.Responses = deletePayloadElements(mutationMethod.Responses, indices)
 				}
+			}
+
+			enumIndices := make([]int, 0)
+			for i, enum := range domain.Enums {
+				key := serviceName + enum.Name
+				if enumMap[key] {
+					enumIndices = append(enumIndices, i)
+					continue
+				}
+				enumMap[key] = true
+			}
+			if len(enumIndices) > 0 {
+				domain.Enums = deleteEnumElements(domain.Enums, enumIndices)
 			}
 		}
 
 	}
 }
-func deleteElements(slice []*Payload, indices []int) []*Payload {
+
+func deletePayloadElements(slice []*Payload, indices []int) []*Payload {
+	// Sort indices in descending order
+	sort.Sort(sort.Reverse(sort.IntSlice(indices)))
+
+	for _, index := range indices {
+		slice = append(slice[:index], slice[index+1:]...)
+	}
+
+	return slice
+}
+
+func deleteEnumElements(slice []*Enum, indices []int) []*Enum {
 	// Sort indices in descending order
 	sort.Sort(sort.Reverse(sort.IntSlice(indices)))
 
@@ -429,6 +514,73 @@ func (r *DomainProtoReader) isDomain(path string) (bool, error) {
 	for _, importPath := range importPaths {
 		if strings.Contains(importPath, "/grpc/") {
 			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func (r *DomainProtoReader) updateDomain() (bool, error) {
+	for _, domains := range r.DomainsMap {
+		for _, domain := range domains {
+			domainName := domain.DomainName
+			camelDomainName := strcase.ToCamel(domainName)
+			lowerCamelDomainName := strcase.ToLowerCamel(domainName)
+			sortStringDomainName := util.GetUpperCaseChars(camelDomainName)
+			for _, method := range domain.QueryMethods {
+				requests := method.Requests
+				responses := method.Responses
+				for _, request := range requests {
+					datas := request.Data
+					for _, data := range datas {
+						if !util.IsProtoType(data.Type) {
+							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
+						}
+					}
+					request.PayloadName = sortStringDomainName + strcase.ToCamel(request.PayloadName)
+				}
+				for _, response := range responses {
+					datas := response.Data
+					for _, data := range datas {
+						if !util.IsProtoType(data.Type) {
+							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
+						}
+					}
+					response.PayloadName = sortStringDomainName + strcase.ToCamel(response.PayloadName)
+				}
+				method.Name = lowerCamelDomainName + strcase.ToCamel(method.Name)
+				method.RequestName = sortStringDomainName + strcase.ToCamel(method.RequestName)
+				method.ResponseName = sortStringDomainName + strcase.ToCamel(method.ResponseName)
+			}
+
+			for _, method := range domain.MutationMethods {
+				requests := method.Requests
+				responses := method.Responses
+				for _, request := range requests {
+					datas := request.Data
+					request.PayloadName = sortStringDomainName + strcase.ToCamel(request.PayloadName)
+					for _, data := range datas {
+						if !util.IsProtoType(data.Type) {
+							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
+						}
+					}
+				}
+				for _, response := range responses {
+					datas := response.Data
+					response.PayloadName = sortStringDomainName + strcase.ToCamel(response.PayloadName)
+					for _, data := range datas {
+						if !util.IsProtoType(data.Type) {
+							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
+						}
+					}
+				}
+				method.Name = lowerCamelDomainName + strcase.ToCamel(method.Name)
+				method.RequestName = sortStringDomainName + strcase.ToCamel(method.RequestName)
+				method.ResponseName = sortStringDomainName + strcase.ToCamel(method.ResponseName)
+			}
+
+			for _, enum := range domain.Enums {
+				enum.Name = sortStringDomainName + strcase.ToCamel(enum.Name)
+			}
 		}
 	}
 	return false, nil

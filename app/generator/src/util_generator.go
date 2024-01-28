@@ -12,17 +12,17 @@ func (s *srcGenerator) generateUtils(domain []*domain.Domain) error {
 	if err != nil {
 		return err
 	}
-	dirPath := "vl-{{ ToSnake .service_name }}/src/utils"
+	dirPath := "vl-bff-{{ ToKebab .service_name }}/src/utils"
 	fileName := "const.ts"
 	if err := gen.GenerateFileByFile(dirPath, fileName, fileName, false); err != nil {
 		return err
 	}
-	dirPath = "vl-{{ ToSnake .service_name }}/src/utils"
+	dirPath = "vl-bff-{{ ToKebab .service_name }}/src/utils"
 	fileName = "errorHandler.ts"
 	if err := gen.GenerateFileByFile(dirPath, fileName, fileName, false); err != nil {
 		return err
 	}
-	dirPath = "vl-{{ ToSnake .service_name }}/src/utils"
+	dirPath = "vl-bff-{{ ToKebab .service_name }}/src/utils"
 	fileName = "logger.ts"
 	if err := gen.GenerateFileByFile(dirPath, fileName, fileName, false); err != nil {
 		return err

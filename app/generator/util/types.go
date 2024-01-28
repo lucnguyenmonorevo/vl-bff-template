@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"strings"
+	"unicode"
 )
 
 func MySQLToGo(sqlType string, unsigned bool) string {
@@ -155,6 +156,8 @@ func ToGraphql(sqlType string) string {
 		return "String"
 	case "bytes":
 		return ""
+	case "timestamp":
+		return "String"
 	default:
 		return sqlType
 	}
@@ -162,25 +165,38 @@ func ToGraphql(sqlType string) string {
 
 func IsProtoType(protoType string) bool {
 	protoTypeMap := map[string]bool{
-		"double":   true,
-		"float":    true,
-		"int32":    true,
-		"int64":    true,
-		"uint32":   true,
-		"uint64":   true,
-		"sint32":   true,
-		"sint64":   true,
-		"fixed32":  true,
-		"fixed64":  true,
-		"sfixed32": true,
-		"sfixed64": true,
-		"bool":     true,
-		"string":   true,
-		"bytes":    true,
-		"[]bytes":  true,
+		"double":    true,
+		"float":     true,
+		"int32":     true,
+		"int64":     true,
+		"uint32":    true,
+		"uint64":    true,
+		"sint32":    true,
+		"sint64":    true,
+		"fixed32":   true,
+		"fixed64":   true,
+		"sfixed32":  true,
+		"sfixed64":  true,
+		"bool":      true,
+		"string":    true,
+		"bytes":     true,
+		"[]bytes":   true,
+		"Timestamp": true,
 	}
 	if _, ok := protoTypeMap[protoType]; ok {
 		return true
 	}
 	return false
+}
+
+func GetUpperCaseChars(input string) string {
+	var upperCaseChars string
+
+	for _, char := range input {
+		if unicode.IsUpper(char) {
+			upperCaseChars += string(char)
+		}
+	}
+
+	return upperCaseChars
 }
