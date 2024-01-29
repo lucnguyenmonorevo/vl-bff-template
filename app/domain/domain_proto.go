@@ -111,6 +111,9 @@ func (r *DomainProtoReader) getDomain(filePath string) (*Domain, error) {
 
 	// Iterate through each line
 	for _, line := range lines {
+		if r.isCommentLine(line) {
+			continue
+		}
 		// Check if the line contains a service definition
 		serviceMatch := serviceRegex.FindStringSubmatch(line)
 		if len(serviceMatch) > 0 {
@@ -196,6 +199,9 @@ func (r *DomainProtoReader) getImportPath(filePath string) ([]string, error) {
 
 	// Iterate through each line
 	for _, line := range lines {
+		if r.isCommentLine(line) {
+			continue
+		}
 		// Check if the line contains a message definition
 		messageMatch := importRegex.FindStringSubmatch(line)
 		if len(messageMatch) > 0 {
@@ -277,6 +283,9 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 	}
 	// Iterate through each line
 	for _, line := range lines {
+		if r.isCommentLine(line) {
+			continue
+		}
 		/* Handle message */
 		// Check if the line contains a message definition
 		enumMatch := messageNameRegex.FindStringSubmatch(line)
@@ -500,7 +509,7 @@ func (r *DomainProtoReader) isValidPath(path string) bool {
 func (r *DomainProtoReader) isDomain(path string) (bool, error) {
 	// TODO: update ignore list
 	ignorePaths := []string{
-		"account/example",
+		"example",
 	}
 	for _, ignorePath := range ignorePaths {
 		if strings.Contains(path, ignorePath) {
@@ -584,4 +593,8 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func (r *DomainProtoReader) isCommentLine(line string) bool {
+	return strings.HasPrefix(strings.TrimSpace(line), "//")
 }
