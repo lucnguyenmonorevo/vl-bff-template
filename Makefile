@@ -1,14 +1,14 @@
 air:
 	air -c .air.toml
 
-generate:
-	go run ./cmd/app/main.go
-
 clone:
 	./scripts/setup-clone-only.sh
 
-run-bff:
-	./scripts/run-bff.sh
+generate:
+	go run ./cmd/app/main.go
 
 setup-bff:
 	./scripts/setup-bff.sh
+
+run-bff:
+	./scripts/run-bff.sh

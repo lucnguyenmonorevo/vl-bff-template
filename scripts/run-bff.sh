@@ -31,6 +31,6 @@ cd $DIR && cd ../ &&
 ./vl-bff-production/scripts/run.sh &
 pids+=($!)
 
-sleep 5
+sleep 15
 cd $DIR && cd ../ &&
 ./vl-bff-router/scripts/run.sh
