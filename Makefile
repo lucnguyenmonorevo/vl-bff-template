@@ -1,6 +1,3 @@
-air:
-	air -c .air.toml
-
 clone:
 	./scripts/setup-clone-only.sh
 

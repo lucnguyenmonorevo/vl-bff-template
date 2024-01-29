@@ -12,7 +12,7 @@ type srcGenerator struct {
 	Domains []*domain.Domain
 }
 
-func NewSchemaGenerator(domains []*domain.Domain) SchemaGenerator {
+func NewSrcGenerator(domains []*domain.Domain) SchemaGenerator {
 	return &srcGenerator{Domains: domains}
 }
 
@@ -28,10 +28,13 @@ func (s *srcGenerator) Generate() error {
 			return err
 		}
 	}
-	if err := s.generateSchemaInAggregates(s.Domains); err != nil {
+	if err := s.generateSchemaInAggregates(); err != nil {
 		return err
 	}
-	if err := s.generateUtils(s.Domains); err != nil {
+	if err := s.generateUtils(); err != nil {
+		return err
+	}
+	if err := s.generateCodegen(); err != nil {
 		return err
 	}
 	return nil

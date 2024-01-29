@@ -152,6 +152,7 @@ copy_dest
 /vl-batch/
 /vl-e2e/
 /vl-raijin/
+/vl-backend-basement/
 
 # Temporary .ssh directory
 /.ssh/

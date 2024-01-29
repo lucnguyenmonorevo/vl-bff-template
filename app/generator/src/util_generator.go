@@ -1,14 +1,13 @@
 package src
 
 import (
-	"vl-template/app/domain"
 	"vl-template/app/generator"
 )
 
-func (s *srcGenerator) generateUtils(domain []*domain.Domain) error {
+func (s *srcGenerator) generateUtils() error {
 	customConfMap := make(map[string]any)
 	customFuncMap := make(map[string]any)
-	gen, err := generator.NewGenerator(domain[0], customConfMap, customFuncMap)
+	gen, err := generator.NewGenerator(s.Domains[0], customConfMap, customFuncMap)
 	if err != nil {
 		return err
 	}

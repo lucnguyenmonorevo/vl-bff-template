@@ -3,17 +3,16 @@ package src
 import (
 	"fmt"
 	"github.com/iancoleman/strcase"
-	"vl-template/app/domain"
 	"vl-template/app/generator"
 )
 
-func (s *srcGenerator) generateSchemaInAggregates(domain []*domain.Domain) error {
+func (s *srcGenerator) generateSchemaInAggregates() error {
 	customConfMap := make(map[string]any)
 	customConfMap["import_schemas"] = s.getSchemaInAggregatesImport()
 	customConfMap["type_defs"] = s.getSchemaInAggregatesTypeDefs()
 	customConfMap["schemas_to_type_defs"] = s.convertSchemaToTypeDef()
 	customFuncMap := make(map[string]any)
-	gen, err := generator.NewGenerator(domain[0], customConfMap, customFuncMap)
+	gen, err := generator.NewGenerator(s.Domains[0], customConfMap, customFuncMap)
 	if err != nil {
 		return err
 	}

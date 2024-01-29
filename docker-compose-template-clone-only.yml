@@ -14,7 +14,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: account
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -37,7 +37,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: business
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -60,7 +60,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: physical-obj
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -83,7 +83,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: production
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -106,7 +106,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: procurement
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -129,7 +129,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: notification
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -152,7 +152,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: general-info
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -175,7 +175,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: bff-account
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -198,7 +198,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: bff-business
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -221,7 +221,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: bff-general-info
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -244,7 +244,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: bff-physical-obj
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -267,7 +267,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: bff-procurement
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -290,7 +290,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: bff-production
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -313,7 +313,7 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: bff-notification
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -336,7 +336,30 @@ services:
       BRANCH_NAME: dev
       #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
       COMPOSE_FILE_NAME: docker-compose.yml
-      SERVICE_NAME: frontend
+      SERVICE_NAME: bff-router
+      BUILD: true
+      DEPENDENCY_SERVICE_NAMES: ""
+      SETUP_ONLY: true
+    volumes:
+      - .:/volume:delegated
+      - /var/run/docker.sock:/var/run/docker.sock:cached
+    networks:
+      - vl-bridge
+
+  backend-basement-setup:
+    container_name: vl-backend-basement-setup
+    hostname: backend-basement-setup
+    build:
+      context: .
+      dockerfile: ./infrastructures/setup/Dockerfile
+    environment:
+      BIND_MOUNT_HOST_DIR: ${PWD}
+      BIND_MOUNT_CONTAINER_DIR: /volume
+      REPOSITORY_NAME: vl-backend-basement
+      BRANCH_NAME: dev
+      #      COMMAND: "vl-frontend/scripts/create_env_for_container.sh"
+      COMPOSE_FILE_NAME: docker-compose.yml
+      SERVICE_NAME: backend-basement
       BUILD: true
       DEPENDENCY_SERVICE_NAMES: ""
       SETUP_ONLY: true
@@ -364,6 +387,8 @@ services:
       production-setup:
         condition: service_started
       notification-setup:
+        condition: service_started
+      backend-basement-setup:
         condition: service_started
       # bff
       bff-account-setup:
