@@ -22,10 +22,10 @@ type Method struct {
 }
 
 type Payload struct {
-	PayloadName string         `json:"name" mapstructure:"name"`
-	Data        []*PayloadData `json:"data" mapstructure:"data"`
-	//EmbeddedPayload  *Payload       `json:"embedded_payload"`
-	//EmbeddedPayloads []*Payload     `json:"embedded_payloads"`
+	Name string         `json:"name" mapstructure:"name"`
+	Data []*PayloadData `json:"data" mapstructure:"data"`
+	Path string         `json:"path" mapstructure:"path"`
+	Type string         `json:"type" mapstructure:"type"`
 }
 
 type PayloadData struct {
@@ -65,12 +65,12 @@ func (r *DomainReader) ReadFromProto() error {
 	domainsSpecReader := NewDomainProtoReader()
 	dirs := map[string]string{}
 	dirs["account"] = "vl-account/proto/account"
-	dirs["business"] = "vl-business/proto/business"
-	dirs["general-info"] = "vl-general-info/proto/general_info"
-	dirs["notification"] = "vl-notification/proto/notification"
-	dirs["physical-obj"] = "vl-physical-obj/proto/physical_obj"
-	dirs["procurement"] = "vl-procurement/proto/procurement"
-	dirs["production"] = "vl-production/proto/production"
+	//dirs["business"] = "vl-business/proto/business"
+	//dirs["general-info"] = "vl-general-info/proto/general_info"
+	//dirs["notification"] = "vl-notification/proto/notification"
+	//dirs["physical-obj"] = "vl-physical-obj/proto/physical_obj"
+	//dirs["procurement"] = "vl-procurement/proto/procurement"
+	//dirs["production"] = "vl-production/proto/production"
 	if err := domainsSpecReader.GetDomains(dirs); err != nil {
 		return err
 	}

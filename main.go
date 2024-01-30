@@ -8,6 +8,6 @@ import (
 //import "fmt"
 
 func main() {
-	line := `//import "fmt"`
-	fmt.Println(strings.HasPrefix(strings.TrimSpace(line), "//"))
+	line := `OSOrganizationSubscriptionCreateResponseData"`
+	fmt.Println(strings.Title(strings.ToLower(strings.TrimSpace(line))))
 }

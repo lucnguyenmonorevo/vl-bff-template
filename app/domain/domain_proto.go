@@ -32,7 +32,7 @@ func (r *DomainProtoReader) GetDomains(dirs map[string]string) error {
 		}
 		r.DomainsMap[serviceName] = domains
 	}
-	r.updateDomain()
+	//r.updateDomain()
 	r.cleanData()
 	return nil
 }
@@ -107,7 +107,7 @@ func (r *DomainProtoReader) getDomain(filePath string) (*Domain, error) {
 	// Variables to keep track of the current service and method
 	var currentServiceName string
 	var inService bool
-	relatedPaths, err := r.getImportPath(filePath)
+	relatedPaths, err := r.getImportPaths(filePath)
 
 	// Iterate through each line
 	for _, line := range lines {
@@ -134,15 +134,17 @@ func (r *DomainProtoReader) getDomain(filePath string) (*Domain, error) {
 				responseName := getLastSplit(responseType, ".")
 
 				requests, tmpEnums, err := r.getRelatedPayload(relatedPaths, requestName)
-				enums = append(enums, tmpEnums...)
 				if err != nil {
 					return nil, err
 				}
+				r.updatePayloadType(requests, requestName, responseName)
+				enums = append(enums, tmpEnums...)
 				responses, tmpEnums, err := r.getRelatedPayload(relatedPaths, responseName)
-				enums = append(enums, tmpEnums...)
 				if err != nil {
 					return nil, err
 				}
+				r.updatePayloadType(responses, requestName, responseName)
+				enums = append(enums, tmpEnums...)
 				if getMethodType(methodName) == "query" {
 					queryMethods = append(queryMethods, &Method{
 						Name:         strcase.ToSnake(methodName),
@@ -183,7 +185,7 @@ func getLastSplit(str string, split string) string {
 	return arr[len(arr)-1]
 }
 
-func (r *DomainProtoReader) getImportPath(filePath string) ([]string, error) {
+func (r *DomainProtoReader) getImportPaths(filePath string) ([]string, error) {
 	rt := make([]string, 0)
 	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -218,7 +220,7 @@ func (r *DomainProtoReader) getRelatedPayload(paths []string, payloadName string
 		if !r.isValidPath(path) {
 			continue
 		}
-		importPaths, err := r.getImportPath(path)
+		importPaths, err := r.getImportPaths(path)
 		if err != nil {
 			importPaths = []string{}
 		}
@@ -276,6 +278,7 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 
 	payload := &Payload{
 		Data: []*PayloadData{},
+		Path: r.getImportPath(filePath),
 	}
 
 	enum := &Enum{
@@ -295,7 +298,7 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 				continue
 			}
 			inMessage = true
-			payload.PayloadName = currentMessageName
+			payload.Name = currentMessageName
 			continue
 		}
 
@@ -401,7 +404,7 @@ func (r *DomainProtoReader) cleanData() {
 			for _, queryMethod := range domain.QueryMethods {
 				indices := make([]int, 0)
 				for i, request := range queryMethod.Requests {
-					key := serviceName + domainName + request.PayloadName
+					key := serviceName + domainName + request.Name
 					if payloadRequestMap[key] {
 						indices = append(indices, i)
 						continue
@@ -414,7 +417,7 @@ func (r *DomainProtoReader) cleanData() {
 
 				indices = make([]int, 0)
 				for i, response := range queryMethod.Responses {
-					key := serviceName + domainName + response.PayloadName
+					key := serviceName + domainName + response.Name
 					if payloadResponseMap[key] {
 						indices = append(indices, i)
 						continue
@@ -429,7 +432,7 @@ func (r *DomainProtoReader) cleanData() {
 			for _, mutationMethod := range domain.MutationMethods {
 				indices := make([]int, 0)
 				for i, request := range mutationMethod.Requests {
-					key := serviceName + domainName + request.PayloadName
+					key := serviceName + domainName + request.Name
 					if payloadRequestMap[key] {
 						indices = append(indices, i)
 						continue
@@ -441,7 +444,7 @@ func (r *DomainProtoReader) cleanData() {
 				}
 				indices = make([]int, 0)
 				for i, response := range mutationMethod.Responses {
-					key := serviceName + domainName + response.PayloadName
+					key := serviceName + domainName + response.Name
 					if payloadResponseMap[key] {
 						indices = append(indices, i)
 						continue
@@ -516,7 +519,7 @@ func (r *DomainProtoReader) isDomain(path string) (bool, error) {
 			return false, nil
 		}
 	}
-	importPaths, err := r.getImportPath(path)
+	importPaths, err := r.getImportPaths(path)
 	if err != nil {
 		return false, err
 	}
@@ -545,7 +548,7 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
 						}
 					}
-					request.PayloadName = sortStringDomainName + strcase.ToCamel(request.PayloadName)
+					request.Name = sortStringDomainName + strcase.ToCamel(request.Name)
 				}
 				for _, response := range responses {
 					datas := response.Data
@@ -554,7 +557,7 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
 						}
 					}
-					response.PayloadName = sortStringDomainName + strcase.ToCamel(response.PayloadName)
+					response.Name = sortStringDomainName + strcase.ToCamel(response.Name)
 				}
 				method.Name = lowerCamelDomainName + strcase.ToCamel(method.Name)
 				method.RequestName = sortStringDomainName + strcase.ToCamel(method.RequestName)
@@ -566,7 +569,7 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 				responses := method.Responses
 				for _, request := range requests {
 					datas := request.Data
-					request.PayloadName = sortStringDomainName + strcase.ToCamel(request.PayloadName)
+					request.Name = sortStringDomainName + strcase.ToCamel(request.Name)
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
 							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
@@ -575,7 +578,7 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 				}
 				for _, response := range responses {
 					datas := response.Data
-					response.PayloadName = sortStringDomainName + strcase.ToCamel(response.PayloadName)
+					response.Name = sortStringDomainName + strcase.ToCamel(response.Name)
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
 							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
@@ -597,4 +600,26 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 
 func (r *DomainProtoReader) isCommentLine(line string) bool {
 	return strings.HasPrefix(strings.TrimSpace(line), "//")
+}
+
+func (r *DomainProtoReader) updatePayloadType(payloads []*Payload, requestName string, responseName string) {
+	for _, payload := range payloads {
+		switch payload.Name {
+		case requestName:
+			payload.Type = "request"
+		case responseName:
+			payload.Type = "response"
+		default:
+			payload.Type = "related"
+		}
+	}
+}
+
+func (r *DomainProtoReader) getImportPath(pathName string) string {
+	splits := strings.Split(pathName, "/proto/")
+	if len(splits) != 2 {
+		return ""
+	}
+	rt := strings.ReplaceAll(splits[1], ".proto", "")
+	return rt
 }

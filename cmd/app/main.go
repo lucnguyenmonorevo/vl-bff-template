@@ -91,6 +91,5 @@ func copyProtos(copier *copy.GeneratedFileCopier) error {
 			return err
 		}
 	}
-
 	return nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/iancoleman/strcase"
 	"os"
 	"path"
+	"strings"
 	"text/template"
 	"vl-template/app/domain"
 	"vl-template/app/generator/util"
@@ -45,11 +46,14 @@ func NewGenerator(
 	confMap = mergeMaps(confMap, customConfMap)
 	// update funcMap
 	funcMap := template.FuncMap{
-		"ToGraphql":    util.ToGraphql,
-		"ToLowerCamel": strcase.ToLowerCamel,
-		"ToCamel":      strcase.ToCamel,
-		"ToSnake":      strcase.ToSnake,
-		"ToKebab":      strcase.ToKebab,
+		"ToGraphql":         util.ToGraphql,
+		"ToLowerCamel":      strcase.ToLowerCamel,
+		"ToCamel":           strcase.ToCamel,
+		"ToSnake":           strcase.ToSnake,
+		"ToKebab":           strcase.ToKebab,
+		"GetUpperCaseChars": util.GetUpperCaseChars,
+		"IsProtoType":       util.IsProtoType,
+		"ToUpper":           strings.ToUpper,
 	}
 	funcMap = mergeMaps(funcMap, customFuncMap)
 

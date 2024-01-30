@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"github.com/iancoleman/strcase"
 	"strings"
 	"unicode"
 )
@@ -190,6 +191,7 @@ func IsProtoType(protoType string) bool {
 }
 
 func GetUpperCaseChars(input string) string {
+	input = strcase.ToCamel(input)
 	var upperCaseChars string
 
 	for _, char := range input {
@@ -198,5 +200,5 @@ func GetUpperCaseChars(input string) string {
 		}
 	}
 
-	return upperCaseChars
+	return strings.ToUpper(upperCaseChars[:1]) + strings.ToLower(upperCaseChars[1:])
 }
