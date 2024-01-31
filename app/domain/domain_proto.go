@@ -32,8 +32,8 @@ func (r *DomainProtoReader) GetDomains(dirs map[string]string) error {
 		}
 		r.DomainsMap[serviceName] = domains
 	}
-	r.cleanData()
 	r.updateDomain()
+	r.cleanData()
 	return nil
 }
 
@@ -604,22 +604,26 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 					datas := request.Data
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
-							data.Type = strcase.ToCamel(data.Type) + requestType
+							if !r.isEnumType(domain, data.Type) {
+								data.Type = data.Type + requestType
+							}
 						}
 					}
-					request.Name = strcase.ToCamel(request.Name) + requestType
+					request.Name = request.Name + requestType
 				}
 				for _, response := range responses {
 					datas := response.Data
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
-							data.Type = strcase.ToCamel(data.Type) + responseType
+							if !r.isEnumType(domain, data.Type) {
+								data.Type = data.Type + responseType
+							}
 						}
 					}
-					response.Name = strcase.ToCamel(response.Name) + responseType
+					response.Name = response.Name + responseType
 				}
-				method.RequestName = strcase.ToCamel(method.RequestName) + requestType
-				method.ResponseName = strcase.ToCamel(method.ResponseName) + responseType
+				method.RequestName = method.RequestName + requestType
+				method.ResponseName = method.ResponseName + responseType
 			}
 
 			for _, method := range domain.MutationMethods {
@@ -627,29 +631,33 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 				responses := method.Responses
 				for _, request := range requests {
 					datas := request.Data
-					request.Name = strcase.ToCamel(request.Name) + requestType
+					request.Name = request.Name + requestType
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
-							data.Type = strcase.ToCamel(data.Type) + requestType
+							if !r.isEnumType(domain, data.Type) {
+								data.Type = data.Type + requestType
+							}
 						}
 					}
 				}
 				for _, response := range responses {
 					datas := response.Data
-					response.Name = strcase.ToCamel(response.Name) + responseType
+					response.Name = response.Name + responseType
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
-							data.Type = strcase.ToCamel(data.Type) + responseType
+							if !r.isEnumType(domain, data.Type) {
+								data.Type = data.Type + responseType
+							}
 						}
 					}
 				}
-				method.RequestName = strcase.ToCamel(method.RequestName) + requestType
-				method.ResponseName = strcase.ToCamel(method.ResponseName) + responseType
+				method.RequestName = method.RequestName + requestType
+				method.ResponseName = method.ResponseName + responseType
 			}
 
-			//for _, enum := range domain.Enums {
-			//	enum.Name = strcase.ToCamel(enum.Name)
-			//}
+			for _, enum := range domain.Enums {
+				enum.Name = strcase.ToCamel(enum.Name)
+			}
 		}
 	}
 	return false, nil
@@ -679,4 +687,13 @@ func (r *DomainProtoReader) getImportPath(pathName string) string {
 	}
 	rt := strings.ReplaceAll(splits[1], ".proto", "")
 	return rt
+}
+
+func (r *DomainProtoReader) isEnumType(domain *Domain, typeField string) bool {
+	for _, enum := range domain.Enums {
+		if enum.Name == typeField {
+			return true
+		}
+	}
+	return false
 }
