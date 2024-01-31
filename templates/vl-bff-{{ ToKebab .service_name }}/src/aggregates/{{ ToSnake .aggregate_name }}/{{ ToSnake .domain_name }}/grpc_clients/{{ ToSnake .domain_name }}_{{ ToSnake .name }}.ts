@@ -6,6 +6,7 @@ import winston from 'winston'
 import {
     BaseRequest,
     convertBaseRequest,
+    convertBaseResponse,
     createBaseGraphQLError,
 } from '../../../../utils/client'
 
@@ -19,19 +20,40 @@ import {
 } from '../graphql_generated/graphql'
 
 import {
-    {{ ToCamel $_.request_name }} as GRPCRequest,
-    // {{ ToCamel $_.request_name }}Data as GRPCRequestData,
-    {{ ToCamel $_.response_name }} as GRPCResponse,
-    // {{ ToCamel $_.response_name }}Data as GRPCResponseData,
+    {{ convertImportGrpc $_.request_name }} as GRPCRequest,
+    // {{ convertImportGrpc $_.request_name }}Data as GRPCRequestData,
+    {{ convertImportGrpc $_.response_name }} as GRPCResponse,
+    // {{ convertImportGrpc $_.response_name }}Data as GRPCResponseData,
 } from '../../../../../proto_generated/{{ $_.request_path }}_pb'
 
-import { {{ ToUpper $_.service_name}}_GRPC_HOST as host, TIME_OUT_SECOND } from '../../../../../config'
+import { {{ ToUpperSnake $_.service_name}}_GRPC_HOST as host, TIME_OUT_SECOND } from '../../../../../config'
 
 const logger = winston.createLogger({
     transports: [new winston.transports.Console()],
 })
 
-export async function {{ ToSnake .domain_name }}_{{ ToSnake .name }}(
+// Convert request
+function convertRequestGraphQLToGRPC(
+    baseRequest: BaseRequest,
+    graphqlReq: GraphQLRequest,
+) {
+    const rt = new GRPCRequest()
+    const base = convertBaseRequest(baseRequest)
+    // TODO: convert request
+    rt.setBase(base)
+    return rt
+}
+
+// Convert response
+function convertResponseGRPCToGraphQL( grpcRes: GRPCResponse.AsObject ) {
+    const grpcResData = grpcRes.data
+    const rt: GraphQLResponse = {
+        // TODO: convert response
+    }
+    return rt
+}
+
+export async function {{ ToLowerCamel .domain_name }}{{ ToCamel .name }}(
     baseRequest: BaseRequest,
     dataRequest: GraphQLRequest,
 ) {
@@ -77,49 +99,3 @@ export async function {{ ToSnake .domain_name }}_{{ ToSnake .name }}(
         })
     })
 }
-
-// Convert request
-function convertRequestGraphQLToGRPC(
-    baseRequest: BaseRequest,
-    graphqlReq: GraphQLRequest,
-) {
-    const rt = new GRPCRequest()
-    const base = convertBaseRequest(baseRequest)
-    // const data = convertRequestDataGraphQLToGRPC(graphqlReq.data)
-    rt.setBase(base)
-    // rt.setData(data)
-    return rt
-}
-//
-// function convertRequestDataGraphQLToGRPC(
-//     graphqlReqData: GraphQLRequestData,
-// ) {
-//     const rt = new GRPCRequestData()
-//     // TODO: implement convert
-//     // rt.setOrganizationalInternalId(graphqlReqData.organizationalInternalId)
-//     // rt.setOrganizationStringId(graphqlReqData.organizationStringId)
-//     // rt.setPassword(graphqlReqData.password)
-//     return rt
-// }
-
-// Convert response
-function convertResponseGRPCToGraphQL( grpcRes: GRPCResponse.AsObject ) {
-    const grpcResData = grpcRes.data
-    // const base = convertBaseResponse(grpcRes.base)
-    // const data = convertResponseGRPCToGraphQLData(grpcResData)
-    const rt: GraphQLResponse = {
-        // data: data,
-        // base: base,
-    }
-    return rt
-}
-
-// function convertResponseGRPCToGraphQLData(grpcResData: GRPCResponseData.AsObject) {
-//     // TODO: implement convert
-//     const rt: GraphQLResponseData = {
-//         // accessToken: grpcResData.accessToken,
-//         // idToken: grpcResData.idToken,
-//         // refreshToken: grpcResData.refreshToken,
-//     }
-//     return rt
-// }

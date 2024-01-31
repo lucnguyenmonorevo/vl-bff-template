@@ -45,7 +45,7 @@ func (s *srcGenerator) getResolverInAggregatesResolvers() string {
 			comma = `,`
 		}
 		domainName := strcase.ToLowerCamel(domain.DomainName)
-		str := fmt.Sprintf(`	...%sResolvers%s`, domainName, comma)
+		str := fmt.Sprintf(`	%sResolvers%s`, domainName, comma)
 		rt += str
 	}
 	return rt

@@ -32,6 +32,7 @@ type PayloadData struct {
 	Name      string `json:"name" mapstructure:"name"`
 	Type      string `json:"type" mapstructure:"type"`
 	IsNotNull bool   `json:"is_not_null" mapstructure:"is_not_null"`
+	IsArray   bool   `json:"is_array" mapstructure:"is_array"`
 }
 
 type Enum struct {
@@ -65,12 +66,12 @@ func (r *DomainReader) ReadFromProto() error {
 	domainsSpecReader := NewDomainProtoReader()
 	dirs := map[string]string{}
 	dirs["account"] = "vl-account/proto/account"
-	//dirs["business"] = "vl-business/proto/business"
-	//dirs["general-info"] = "vl-general-info/proto/general_info"
-	//dirs["notification"] = "vl-notification/proto/notification"
-	//dirs["physical-obj"] = "vl-physical-obj/proto/physical_obj"
-	//dirs["procurement"] = "vl-procurement/proto/procurement"
-	//dirs["production"] = "vl-production/proto/production"
+	dirs["business"] = "vl-business/proto/business"
+	dirs["general-info"] = "vl-general-info/proto/general_info"
+	dirs["notification"] = "vl-notification/proto/notification"
+	dirs["physical-obj"] = "vl-physical-obj/proto/physical_obj"
+	dirs["procurement"] = "vl-procurement/proto/procurement"
+	dirs["production"] = "vl-production/proto/production"
 	if err := domainsSpecReader.GetDomains(dirs); err != nil {
 		return err
 	}

@@ -2,18 +2,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
-    MutationResolvers,
+  QueryResolvers,
 {{ $_.import_requests}}} from '../graphql_generated/graphql'
 
 import {
-    BaseRequest,
+  BaseRequest,
 } from '../../../../utils/client'
 
 {{ $_.import_convert }}
-const mutations: MutationResolvers = {
-  Mutation: {
+const toSnakeDomain_nameQueries: QueryResolvers = {
+  Query: {
     {{- $_.resolvers -}}
   },
 }
-
-export default mutations
+export default toSnakeDomain_nameQueries

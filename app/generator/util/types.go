@@ -181,7 +181,6 @@ func IsProtoType(protoType string) bool {
 		"bool":      true,
 		"string":    true,
 		"bytes":     true,
-		"[]bytes":   true,
 		"Timestamp": true,
 	}
 	if _, ok := protoTypeMap[protoType]; ok {
@@ -201,4 +200,10 @@ func GetUpperCaseChars(input string) string {
 	}
 
 	return strings.ToUpper(upperCaseChars[:1]) + strings.ToLower(upperCaseChars[1:])
+}
+
+func ToUpperSnake(str string) string {
+	rt := strings.ToUpper(str)
+	rt = strings.ReplaceAll(rt, "-", "_")
+	return rt
 }

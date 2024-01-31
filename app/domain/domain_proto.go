@@ -32,8 +32,8 @@ func (r *DomainProtoReader) GetDomains(dirs map[string]string) error {
 		}
 		r.DomainsMap[serviceName] = domains
 	}
-	//r.updateDomain()
 	r.cleanData()
+	r.updateDomain()
 	return nil
 }
 
@@ -272,11 +272,20 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 	var currentMessageName string
 	var inMessage bool
 
+	// Variables to keep track of the embedded message
+	var currentEmbeddedMessageName string
+	var inEmbeddedMessage bool
+
 	// Variables to keep track of the current enum
 	var currentEnumName string
 	var inEnum bool
 
 	payload := &Payload{
+		Data: []*PayloadData{},
+		Path: r.getImportPath(filePath),
+	}
+
+	embeddedPayload := &Payload{
 		Data: []*PayloadData{},
 		Path: r.getImportPath(filePath),
 	}
@@ -291,9 +300,16 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 		}
 		/* Handle message */
 		// Check if the line contains a message definition
-		enumMatch := messageNameRegex.FindStringSubmatch(line)
-		if len(enumMatch) > 0 {
-			currentMessageName = enumMatch[1]
+		messageMatch := messageNameRegex.FindStringSubmatch(line)
+		if len(messageMatch) > 0 {
+			// check embedded message
+			if inMessage {
+				currentEmbeddedMessageName = messageMatch[1]
+				inEmbeddedMessage = true
+				embeddedPayload.Name = currentEmbeddedMessageName
+				continue
+			}
+			currentMessageName = messageMatch[1]
 			if currentMessageName != payloadName {
 				continue
 			}
@@ -301,13 +317,57 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 			payload.Name = currentMessageName
 			continue
 		}
-
-		// Check if the line contains a field definition
-		if inMessage {
+		if inEmbeddedMessage {
 			fieldMatch := fieldRegex.FindStringSubmatch(line)
 			if len(fieldMatch) > 0 {
+				isArray := false
 				fieldType := fieldMatch[1]
 				fieldName := fieldMatch[2]
+				if strings.Contains(line, "repeated") {
+					isArray = true
+				}
+				if fieldName == "base" {
+					continue
+				}
+				embeddedPayload.Data = append(embeddedPayload.Data, &PayloadData{
+					Name:      fieldName,
+					Type:      fieldType,
+					IsNotNull: false,
+					IsArray:   isArray,
+				})
+			}
+			// Check if the line ends the current message
+			if strings.Contains(line, "}") {
+				inEmbeddedMessage = false
+				if len(embeddedPayload.Data) == 0 {
+					embeddedPayload.Data = append(embeddedPayload.Data, &PayloadData{
+						Name:      "default_field",
+						Type:      "string",
+						IsNotNull: false,
+					})
+				}
+				payloads = append(payloads, embeddedPayload)
+				embeddedPayload = &Payload{
+					Data: []*PayloadData{},
+				}
+			}
+			// Skip when read embedded message
+
+			continue
+		}
+
+		if inMessage {
+
+			// Complete read embedded message
+
+			fieldMatch := fieldRegex.FindStringSubmatch(line)
+			if len(fieldMatch) > 0 {
+				isArray := false
+				fieldType := fieldMatch[1]
+				fieldName := fieldMatch[2]
+				if strings.Contains(line, "repeated") {
+					isArray = true
+				}
 				if fieldName == "base" {
 					continue
 				}
@@ -315,6 +375,7 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 					Name:      fieldName,
 					Type:      fieldType,
 					IsNotNull: false,
+					IsArray:   isArray,
 				})
 			}
 		}
@@ -337,7 +398,7 @@ func (r *DomainProtoReader) getGrpc(filePath string, payloadName string) ([]*Pay
 
 		/* Handle enum */
 		// Check if the line contains a message definition
-		enumMatch = enumNameRegex.FindStringSubmatch(line)
+		enumMatch := enumNameRegex.FindStringSubmatch(line)
 		if len(enumMatch) > 0 {
 			currentEnumName = enumMatch[1]
 			if currentEnumName != payloadName {
@@ -532,12 +593,10 @@ func (r *DomainProtoReader) isDomain(path string) (bool, error) {
 }
 
 func (r *DomainProtoReader) updateDomain() (bool, error) {
+	requestType := "Input"
+	responseType := "Type"
 	for _, domains := range r.DomainsMap {
 		for _, domain := range domains {
-			domainName := domain.DomainName
-			camelDomainName := strcase.ToCamel(domainName)
-			lowerCamelDomainName := strcase.ToLowerCamel(domainName)
-			sortStringDomainName := util.GetUpperCaseChars(camelDomainName)
 			for _, method := range domain.QueryMethods {
 				requests := method.Requests
 				responses := method.Responses
@@ -545,23 +604,22 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 					datas := request.Data
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
-							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
+							data.Type = strcase.ToCamel(data.Type) + requestType
 						}
 					}
-					request.Name = sortStringDomainName + strcase.ToCamel(request.Name)
+					request.Name = strcase.ToCamel(request.Name) + requestType
 				}
 				for _, response := range responses {
 					datas := response.Data
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
-							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
+							data.Type = strcase.ToCamel(data.Type) + responseType
 						}
 					}
-					response.Name = sortStringDomainName + strcase.ToCamel(response.Name)
+					response.Name = strcase.ToCamel(response.Name) + responseType
 				}
-				method.Name = lowerCamelDomainName + strcase.ToCamel(method.Name)
-				method.RequestName = sortStringDomainName + strcase.ToCamel(method.RequestName)
-				method.ResponseName = sortStringDomainName + strcase.ToCamel(method.ResponseName)
+				method.RequestName = strcase.ToCamel(method.RequestName) + requestType
+				method.ResponseName = strcase.ToCamel(method.ResponseName) + responseType
 			}
 
 			for _, method := range domain.MutationMethods {
@@ -569,30 +627,29 @@ func (r *DomainProtoReader) updateDomain() (bool, error) {
 				responses := method.Responses
 				for _, request := range requests {
 					datas := request.Data
-					request.Name = sortStringDomainName + strcase.ToCamel(request.Name)
+					request.Name = strcase.ToCamel(request.Name) + requestType
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
-							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
+							data.Type = strcase.ToCamel(data.Type) + requestType
 						}
 					}
 				}
 				for _, response := range responses {
 					datas := response.Data
-					response.Name = sortStringDomainName + strcase.ToCamel(response.Name)
+					response.Name = strcase.ToCamel(response.Name) + responseType
 					for _, data := range datas {
 						if !util.IsProtoType(data.Type) {
-							data.Type = sortStringDomainName + strcase.ToCamel(data.Type)
+							data.Type = strcase.ToCamel(data.Type) + responseType
 						}
 					}
 				}
-				method.Name = lowerCamelDomainName + strcase.ToCamel(method.Name)
-				method.RequestName = sortStringDomainName + strcase.ToCamel(method.RequestName)
-				method.ResponseName = sortStringDomainName + strcase.ToCamel(method.ResponseName)
+				method.RequestName = strcase.ToCamel(method.RequestName) + requestType
+				method.ResponseName = strcase.ToCamel(method.ResponseName) + responseType
 			}
 
-			for _, enum := range domain.Enums {
-				enum.Name = sortStringDomainName + strcase.ToCamel(enum.Name)
-			}
+			//for _, enum := range domain.Enums {
+			//	enum.Name = strcase.ToCamel(enum.Name)
+			//}
 		}
 	}
 	return false, nil
@@ -610,7 +667,7 @@ func (r *DomainProtoReader) updatePayloadType(payloads []*Payload, requestName s
 		case responseName:
 			payload.Type = "response"
 		default:
-			payload.Type = "related"
+			payload.Type = ""
 		}
 	}
 }

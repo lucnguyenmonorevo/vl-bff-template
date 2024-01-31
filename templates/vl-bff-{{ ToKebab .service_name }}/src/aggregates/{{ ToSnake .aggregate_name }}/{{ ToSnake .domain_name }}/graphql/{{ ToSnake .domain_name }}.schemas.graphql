@@ -13,7 +13,7 @@ enum {{ GetUpperCaseChars $_.domain_name }}{{ $enum.name }} {
 {{ $request_data := $method_request.data -}}
 input {{ GetUpperCaseChars $_.domain_name }}{{ $method_request.name }} {
 {{- range $field := $request_data }}
-    {{ ToLowerCamel $field.name }}: {{ if IsProtoType $field.type }}{{ else }}{{ GetUpperCaseChars $_.domain_name }}{{ end }}{{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
+    {{ ToLowerCamel $field.name }}: {{ if $field.is_array }}[{{ end }}{{ if IsProtoType $field.type }}{{ else }}{{ GetUpperCaseChars $_.domain_name }}{{ end }}{{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}{{ if $field.is_array }}]{{ end -}}
 {{ end }}
 }
 
@@ -24,7 +24,7 @@ input {{ GetUpperCaseChars $_.domain_name }}{{ $method_request.name }} {
 {{ $response_data := $method_response.data -}}
 type {{ GetUpperCaseChars $_.domain_name }}{{ $method_response.name }} {
 {{- range $field := $response_data }}
-    {{ ToLowerCamel $field.name }}: {{ if IsProtoType $field.type }}{{ else }}{{ GetUpperCaseChars $_.domain_name }}{{ end }}{{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
+    {{ ToLowerCamel $field.name }}: {{ if $field.is_array }}[{{ end }}{{ if IsProtoType $field.type }}{{ else }}{{ GetUpperCaseChars $_.domain_name }}{{ end }}{{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}{{ if $field.is_array }}]{{ end -}}
 {{ end }}
 }
 
@@ -38,7 +38,7 @@ type {{ GetUpperCaseChars $_.domain_name }}{{ $method_response.name }} {
 {{ $request_data := $method_request.data -}}
 input {{ GetUpperCaseChars $_.domain_name }}{{ $method_request.name }} {
 {{- range $field := $request_data }}
-    {{ ToLowerCamel $field.name }}: {{ if IsProtoType $field.type }}{{ else }}{{ GetUpperCaseChars $_.domain_name }}{{ end }}{{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
+    {{ ToLowerCamel $field.name }}: {{ if $field.is_array }}[{{ end }}{{ if IsProtoType $field.type }}{{ else }}{{ GetUpperCaseChars $_.domain_name }}{{ end }}{{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}{{ if $field.is_array }}]{{ end -}}
 {{ end }}
 }
 
@@ -49,7 +49,7 @@ input {{ GetUpperCaseChars $_.domain_name }}{{ $method_request.name }} {
 {{ $response_data := $method_response.data -}}
 type {{ GetUpperCaseChars $_.domain_name }}{{ $method_response.name }} {
 {{- range $field := $response_data }}
-    {{ ToLowerCamel $field.name }}: {{ if IsProtoType $field.type }}{{ else }}{{ GetUpperCaseChars $_.domain_name }}{{ end }}{{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}
+    {{ ToLowerCamel $field.name }}: {{ if $field.is_array }}[{{ end }}{{ if IsProtoType $field.type }}{{ else }}{{ GetUpperCaseChars $_.domain_name }}{{ end }}{{ ToGraphql $field.type -}}{{ if $field.is_not_null -}}!{{ end -}}{{ if $field.is_array }}]{{ end -}}
 {{ end }}
 }
 

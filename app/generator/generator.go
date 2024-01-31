@@ -54,6 +54,7 @@ func NewGenerator(
 		"GetUpperCaseChars": util.GetUpperCaseChars,
 		"IsProtoType":       util.IsProtoType,
 		"ToUpper":           strings.ToUpper,
+		"ToUpperSnake":      util.ToUpperSnake,
 	}
 	funcMap = mergeMaps(funcMap, customFuncMap)
 

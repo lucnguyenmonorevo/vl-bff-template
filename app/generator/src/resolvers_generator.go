@@ -23,13 +23,13 @@ func (s *srcGenerator) generateResolvers(domainInput *domain.Domain) error {
 	dirPath := "vl-bff-{{ ToKebab .service_name }}/src/aggregates/{{ ToSnake .aggregate_name }}/{{ ToSnake .domain_name }}/resolvers"
 	fileName := ""
 	if len(domainInput.MutationMethods) > 0 {
-		fileName = "mutations.ts"
+		fileName = "{{ ToSnake .domain_name }}.mutations.ts"
 		if err := gen.GenerateFileByFile(dirPath, fileName, fileName, false); err != nil {
 			return err
 		}
 	}
 	if len(domainInput.QueryMethods) > 0 {
-		fileName = "queries.ts"
+		fileName = "{{ ToSnake .domain_name }}.queries.ts"
 		if err := gen.GenerateFileByFile(dirPath, fileName, fileName, false); err != nil {
 			return err
 		}
@@ -66,7 +66,7 @@ func (s *srcGenerator) generateResolversImportConvert(domainInput *domain.Domain
 			comma = ""
 		}
 		str := fmt.Sprintf(`import { %s } from '../grpc_clients/%s'%s`,
-			strcase.ToSnake(domainInput.DomainName)+"_"+strcase.ToSnake(method.Name),
+			strcase.ToLowerCamel(domainInput.DomainName)+strcase.ToCamel(method.Name),
 			strcase.ToSnake(domainInput.DomainName)+"_"+strcase.ToSnake(method.Name),
 			comma)
 		rt += str
@@ -94,7 +94,7 @@ func (s *srcGenerator) generateResolversResolvers(domainInput *domain.Domain) st
 			strcase.ToCamel(method.Name),
 			util.GetUpperCaseChars(domainInput.DomainName),
 			strcase.ToCamel(method.RequestName),
-			strcase.ToSnake(domainInput.DomainName)+"_"+strcase.ToSnake(method.Name),
+			strcase.ToLowerCamel(domainInput.DomainName)+strcase.ToCamel(method.Name),
 			comma)
 		rt += str
 	}
@@ -104,12 +104,12 @@ func (s *srcGenerator) generateResolversResolvers(domainInput *domain.Domain) st
 func (s *srcGenerator) generateResolverTsImport(domainInput *domain.Domain) string {
 	rt := ""
 	if len(domainInput.MutationMethods) > 0 {
-		rt += `import mutations from './resolvers/mutations'
-`
+		rt += fmt.Sprintf(`import mutations from './resolvers/%s.mutations'
+`, strcase.ToSnake(domainInput.DomainName))
 	}
 	if len(domainInput.QueryMethods) > 0 {
-		rt += `import queries from './resolvers/queries'
-`
+		rt += fmt.Sprintf(`import queries from './resolvers/%s.queries'
+`, strcase.ToSnake(domainInput.DomainName))
 	}
 	return rt
 }
